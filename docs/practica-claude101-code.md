@@ -165,4 +165,8 @@ Registro de la práctica con un proyecto pequeño (script en Python que lee fact
 
 ![CLAUDE.md en vista previa de VS Code](img/12-claude-md-preview.png)
 
-**Pendiente:** verificar los ajustes del code-review con `/diff` y continuar con el Paso 5 (subagentes).
+> **Lección aprendida — `/diff` necesita git:** `/diff` compara el código actual contra el último commit. La carpeta `D:\AppMedicamento` **no era un repositorio git** (sin carpeta `.git`), así que `/diff` no tenía con qué comparar. Solución: pedirle a Claude *"inicializa git y haz un primer commit con el estado actual"* y usar `/diff` desde la siguiente HU.
+>
+> Momento de uso en el flujo: Claude termina la tarea → **`/diff`** (revisión propia) → `/code-review` (segunda opinión) → commit.
+
+**Pendiente:** inicializar git con un primer commit y continuar con el Paso 5 (subagentes).

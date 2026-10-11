@@ -18,11 +18,12 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 ## Arquitectura
 
 - `index.html` es la estructura de una sola página: encabezado, área de contenido `main`, menú inferior fijo, dos ventanas emergentes compartidas y un aviso tipo toast. Las ventanas son `#modalForm`, para crear y editar, y `#modalConfirm`, que sirve como confirmación y también como aviso de solo lectura. Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: `js/storage.js` debe cargarse antes que los scripts de cada funcionalidad.
-- `js/storage.js` expone un objeto global `Storage` (una IIFE) y es el único archivo que usa `localStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
+- `js/storage.js` expone un objeto global `VetStorage` (una IIFE; no se llama `Storage` para no ocultar la interfaz del navegador) y es el único archivo que usa `localStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
   - `vet_clasificaciones`: `[{ codigo, nombre }]`
   - `vet_medicamentos`: ejemplos `[{ id, nombre, codigoClasificacion }]`. Son temporales y sirven para probar la regla de "no borrar una clasificación con datos asociados" antes de que exista el módulo de Medicamentos. Reemplázalos cuando se construya ese módulo.
-  - `vet_seq_clasificacion`: el último código asignado. Los códigos son consecutivos, automáticos y no editables, y no se reutilizan después de borrar.
-- Los scripts de cada funcionalidad, como `js/clasificaciones.js`, son IIFE independientes que vuelven a dibujar la pantalla desde `Storage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
+  - `vet_seq_clasificacion`: el último código asignado. Los códigos son consecutivos, automáticos y no editables, y no se reutilizan después de borrar. El siguiente código es el mayor entre esta secuencia y el código más alto existente, más 1, para que nunca choque.
+  - Las funciones `save*` devuelven `false` si el navegador no permite guardar; las pantallas deben mostrar un error en ese caso, no un mensaje de éxito.
+- Los scripts de cada funcionalidad, como `js/clasificaciones.js`, son IIFE independientes que vuelven a dibujar la pantalla desde `VetStorage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
 - Las pestañas **Medicamentos** y **Calcular** del menú inferior están desactivadas y reservadas para historias futuras.
 
 ## Reglas de negocio ya implementadas (HU-01 Clasificaciones)

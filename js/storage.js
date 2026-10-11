@@ -1,5 +1,6 @@
 // Persistencia en localStorage con datos semilla para el prototipo.
-const Storage = (() => {
+// Se llama VetStorage para no ocultar la interfaz global Storage del navegador.
+const VetStorage = (() => {
   const KEYS = {
     clasificaciones: 'vet_clasificaciones',
     medicamentos: 'vet_medicamentos',
@@ -32,11 +33,14 @@ const Storage = (() => {
     }
   }
 
+  // Devuelve true si se guardó, false si el navegador lo impidió (cuota, modo privado…).
   function write(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
+      return true;
     } catch (e) {
       console.warn('No se pudo guardar en localStorage', e);
+      return false;
     }
   }
 
@@ -50,15 +54,24 @@ const Storage = (() => {
     }
   }
 
+  // El siguiente código nunca puede chocar con uno existente, aunque la
+  // secuencia guardada se haya perdido o dañado.
+  function calcularSiguiente() {
+    const seq = Number(read(KEYS.seqClasificacion, 0)) || 0;
+    const maxExistente = read(KEYS.clasificaciones, [])
+      .reduce((max, c) => Math.max(max, c.codigo), 0);
+    return Math.max(seq, maxExistente) + 1;
+  }
+
   seed();
 
   return {
     getClasificaciones: () => read(KEYS.clasificaciones, []),
     saveClasificaciones: (lista) => write(KEYS.clasificaciones, lista),
     getMedicamentos: () => read(KEYS.medicamentos, []),
-    peekNextCodigo: () => read(KEYS.seqClasificacion, 0) + 1,
+    peekNextCodigo: calcularSiguiente,
     takeNextCodigo() {
-      const next = read(KEYS.seqClasificacion, 0) + 1;
+      const next = calcularSiguiente();
       write(KEYS.seqClasificacion, next);
       return next;
     }

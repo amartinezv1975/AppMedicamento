@@ -108,8 +108,6 @@ body {
   text-align: left;
 }
 .grid th {
-  position: sticky;
-  top: 0;
   background: var(--primary);
   color: #fff;
   font-weight: 600;

@@ -58,15 +58,15 @@
 
     <nav class="bottom-nav" aria-label="Menú principal">
       <a href="#" class="nav-item active" aria-current="page"><span aria-hidden="true">🏷️</span>Clasificaciones</a>
-      <a href="#" class="nav-item disabled" aria-disabled="true"><span aria-hidden="true">💉</span>Medicamentos</a>
-      <a href="#" class="nav-item disabled" aria-disabled="true"><span aria-hidden="true">🐾</span>Calcular</a>
+      <a class="nav-item disabled" aria-disabled="true"><span aria-hidden="true">💉</span>Medicamentos</a>
+      <a class="nav-item disabled" aria-disabled="true"><span aria-hidden="true">🐾</span>Calcular</a>
     </nav>
   </div>
 
   <!-- Modal crear / editar -->
   <div id="modalForm" class="modal" hidden>
     <div class="modal-backdrop" data-cerrar></div>
-    <form id="formClasificacion" class="modal-sheet" novalidate>
+    <form id="formClasificacion" class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="tituloForm" novalidate>
       <h3 id="tituloForm">Nueva clasificación</h3>
       <label class="field">
         <span>Código</span>
@@ -87,7 +87,7 @@
   <!-- Modal confirmación / aviso -->
   <div id="modalConfirm" class="modal" hidden>
     <div class="modal-backdrop" data-cerrar></div>
-    <div class="modal-sheet" role="alertdialog" aria-labelledby="tituloConfirm">
+    <div class="modal-sheet" role="alertdialog" aria-modal="true" aria-labelledby="tituloConfirm" aria-describedby="textoConfirm">
       <div id="iconoConfirm" class="confirm-icon" aria-hidden="true">🗑️</div>
       <h3 id="tituloConfirm"></h3>
       <p id="textoConfirm" class="confirm-text"></p>
