@@ -1,0 +1,103 @@
+ESTÁNDAR DE NOMENCLATURA - VetDosis (v0.1)
+
+Grupo                Elemento                              Regla / Prefijo                                                                  Ejemplo
+-------------------  ------------------------------------  -------------------------------------------------------------------------------  -----------------------------------
+Regla general        Estructura                            <ámbito>_<tipo>_<nombre>                                                         v_ent_pesoAnimal
+Regla general        Ámbito                                1 a 3 letras minúsculas                                                          v
+Regla general        Tipo                                  3 letras minúsculas                                                              ent
+Regla general        Nombre                                camelCase, en español, descriptivo                                               pesoAnimal
+Prefijos de ámbito   Variable local (let)                  v_                                                                               v_dec_dosisTotal
+Prefijos de ámbito   Variable global o de módulo           g_                                                                               g_arr_clasificaciones
+Prefijos de ámbito   Constante (nombre en MAYÚSCULAS)      c_                                                                               c_ent_FILAS_POR_PAGINA
+Prefijos de ámbito   Parámetro de función                  p_                                                                               p_ent_codigo
+Prefijos de ámbito   Función (empieza con verbo)           f_                                                                               f_guardarClasificacion
+Prefijos de ámbito   Manejador de evento                   h_                                                                               h_clickGuardar
+Prefijos de ámbito   Clase (nombre en PascalCase)          cls_                                                                             cls_Clasificacion
+Prefijos de ámbito   Índice de ciclo for                   ix_                                                                              ix_fila
+Prefijos de ámbito   Elemento de ciclo for...of / forEach  it_                                                                              it_clasificacion
+Prefijos de tipo     Entero                                ent                                                                              v_ent_codigo
+Prefijos de tipo     Decimal                               dec                                                                              v_dec_pesoKg
+Prefijos de tipo     Texto (string)                        txt                                                                              v_txt_nombre
+Prefijos de tipo     Booleano (nombre como pregunta)       bol                                                                              v_bol_esDuplicado
+Prefijos de tipo     Fecha (Date)                          fec                                                                              v_fec_registro
+Prefijos de tipo     Arreglo                               arr                                                                              v_arr_medicamentos
+Prefijos de tipo     Objeto                                obj                                                                              v_obj_clasificacion
+Prefijos de tipo     Map                                   map                                                                              v_map_dosisPorEspecie
+Prefijos de tipo     Set                                   set                                                                              v_set_codigosUsados
+Prefijos de tipo     Elemento del DOM                      dom                                                                              v_dom_btnGuardar
+Prefijos de tipo     Función como valor (callback)         fun                                                                              p_fun_alTerminar
+Prefijos de tipo     Promesa                               prm                                                                              v_prm_carga
+Prefijos de tipo     Texto en formato JSON                 jsn                                                                              v_jsn_datosGuardados
+Prefijos de tipo     Función que devuelve valor            f_<tipo>_<verbo>                                                                 f_dec_calcularDosis
+Prefijos de tipo     Función que no devuelve valor         f_<verbo>                                                                        f_mostrarTabla
+Ciclos               Ciclo for                             ix_ + lo que se recorre                                                          for (let ix_fila = 0; ...)
+Ciclos               Ciclo for anidado                     ix_ + otro nombre                                                                ix_columna
+Ciclos               Ciclo for...of / forEach              it_ + elemento en singular                                                       for (const it_clasificacion of ...)
+Ciclos               Ciclo while                           Regla general en la variable de control                                          v_bol_hayPendientes
+Ciclos               Prohibido                             i, j, k sueltos                                                                  -
+Excepciones          Propiedades de objetos de datos       Sin prefijo (se guardan en localStorage)                                         { codigo, nombre }
+Excepciones          Claves de localStorage existentes     Sin prefijo (ya están en uso)                                                    vet_clasificaciones
+Excepciones          APIs nativas del navegador            Sin prefijo (no son nuestras)                                                    document, addEventListener
+Excepciones          Nombres de archivo                    Regla propia (grupo Archivos y carpetas)                                         storage.js
+HTML                 Botón (id)                            btn-                                                                             btn-guardar-clasificacion
+HTML                 Campo de texto / número (id)          txt-                                                                             txt-peso-animal
+HTML                 Lista desplegable (id)                sel-                                                                             sel-especie
+HTML                 Casilla de verificación (id)          chk-                                                                             chk-activo
+HTML                 Botón de opción (id)                  rad-                                                                             rad-unidad-kg
+HTML                 Formulario (id)                       frm-                                                                             frm-clasificacion
+HTML                 Tabla (id)                            tbl-                                                                             tbl-clasificaciones
+HTML                 Modal (id)                            mdl-                                                                             mdl-confirmar-borrado
+HTML                 Etiqueta (id)                         lbl-                                                                             lbl-error-nombre
+HTML                 Sección / contenedor (id)             sec-                                                                             sec-medicamentos
+HTML                 Imagen (id)                           img-                                                                             img-estado-vacio
+HTML                 Navegación (id)                       nav-                                                                             nav-inferior
+HTML                 Atributo name                         Igual al id, sin prefijo de control                                              peso-animal
+HTML                 Atributo de datos                     data- + kebab-case                                                               data-codigo
+HTML                 Relación HTML -> JS                   id kebab-case -> v_dom_ camelCase                                                btn-guardar -> v_dom_btnGuardar
+CSS                  Bloque (BEM)                          vd-<bloque>                                                                      vd-tabla
+CSS                  Elemento (BEM)                        vd-<bloque>__<elemento>                                                          vd-tabla__fila
+CSS                  Modificador (BEM)                     ...--<modificador>                                                               vd-tabla__fila--seleccionada
+CSS                  Estado (lo cambia JS)                 es-<estado>                                                                      es-oculto
+CSS                  Utilidad                              u-<propiedad>                                                                    u-texto-centrado
+CSS                  Gancho para JS (sin estilos)          js-<nombre>                                                                      js-abrir-modal
+CSS                  Variable de color                     --vd-color-<nombre>                                                              --vd-color-primario
+CSS                  Variable de fuente                    --vd-fuente-<nombre>                                                             --vd-fuente-base
+CSS                  Variable de espaciado                 --vd-esp-<nombre>                                                                --vd-esp-md
+CSS                  Variable de radio                     --vd-radio-<nombre>                                                              --vd-radio-boton
+CSS                  Variable de sombra                    --vd-sombra-<nombre>                                                             --vd-sombra-tarjeta
+CSS                  Prohibido                             Estilos por id y colores sueltos (#c0392b)                                       -
+Python               Variable (nombre en snake_case)       v_<tipo>_                                                                        v_dec_peso_kg
+Python               Constante                             c_<tipo>_MAYÚSCULAS                                                              c_ent_MAX_FILAS
+Python               Parámetro                             p_<tipo>_                                                                        p_txt_ruta_archivo
+Python               Función                               f_[<tipo>_]<verbo>                                                               f_dec_calcular_dosis
+Python               Clase                                 cls_ + PascalCase                                                                cls_Factura
+Python               Ciclo                                 it_ / ix_                                                                        for it_factura in v_arr_facturas:
+Python               Módulo (archivo)                      snake_case                                                                       lector_facturas.py
+SQL / PL-SQL         Tabla                                 tb_                                                                              tb_clasificacion
+SQL / PL-SQL         Vista                                 vw_                                                                              vw_medicamentos_activos
+SQL / PL-SQL         Secuencia                             sq_                                                                              sq_clasificacion
+SQL / PL-SQL         Llave primaria                        pk_                                                                              pk_clasificacion
+SQL / PL-SQL         Llave foránea                         fk_<tabla>_<referencia>                                                          fk_medicamento_clasificacion
+SQL / PL-SQL         Índice                                ix_                                                                              ix_medicamento_nombre
+SQL / PL-SQL         Procedimiento                         sp_                                                                              sp_guardar_clasificacion
+SQL / PL-SQL         Función                               fn_                                                                              fn_calcular_dosis
+SQL / PL-SQL         Trigger                               tr_<tabla>_<momento>                                                             tr_medicamento_bi
+SQL / PL-SQL         Paquete                               pkg_                                                                             pkg_dosificacion
+SQL / PL-SQL         Variable PL/SQL                       v_<tipo>_                                                                        v_ent_total
+SQL / PL-SQL         Parámetro PL/SQL                      p_<tipo>_                                                                        p_ent_codigo
+SQL / PL-SQL         Cursor                                cur_                                                                             cur_medicamentos
+SQL / PL-SQL         Columnas                              snake_case, sin prefijo                                                          codigo, nombre
+Archivos y carpetas  HTML, CSS, JS                         minúsculas, kebab-case                                                           calculo-dosis.js
+Archivos y carpetas  Python                                minúsculas, snake_case                                                           lector_facturas.py
+Archivos y carpetas  Imágenes                              <uso>-<nombre>                                                                   icono-borrar.svg
+Archivos y carpetas  Historias de usuario                  HU-<nn>-<nombre>.md                                                              HU-01-clasificaciones.md
+Archivos y carpetas  Carpetas                              minúsculas                                                                       js/, css/, img/, hu/
+Validación (regex)   Variable / parámetro / global         ^[vpg]_(ent|dec|txt|bol|fec|arr|obj|map|set|dom|fun|prm|jsn)_[a-z][a-zA-Z0-9]*$  v_ent_codigo
+Validación (regex)   Constante                             ^c_(ent|dec|txt|bol|arr|obj)_[A-Z][A-Z0-9_]*$                                    c_ent_MAX_FILAS
+Validación (regex)   Función                               ^f_((ent|dec|txt|bol|arr|obj)_)?[a-z][a-zA-Z0-9]*$                               f_dec_calcularDosis
+Validación (regex)   Manejador                             ^h_[a-z][a-zA-Z0-9]*$                                                            h_clickGuardar
+Validación (regex)   Clase                                 ^cls_[A-Z][a-zA-Z0-9]*$                                                          cls_Clasificacion
+Validación (regex)   Ciclo                                 ^(ix|it)_[a-z][a-zA-Z0-9]*$                                                      ix_fila
+Validación (regex)   id HTML                               ^(btn|txt|sel|chk|rad|frm|tbl|mdl|lbl|sec|img|nav)-[a-z0-9-]+$                   btn-guardar
+Validación (regex)   Clase CSS                             ^(vd-[a-z0-9-]+(__[a-z0-9-]+)?(--[a-z0-9-]+)?|es-[a-z-]+|u-[a-z-]+|js-[a-z-]+)$  vd-tabla__fila
+Validación (regex)   Variable CSS                          ^--vd-(color|fuente|esp|radio|sombra)-[a-z0-9-]+$                                --vd-color-primario

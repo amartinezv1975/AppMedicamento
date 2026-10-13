@@ -1,13 +1,13 @@
 // Persistencia en localStorage con datos semilla para el prototipo.
-// Se llama VetStorage para no ocultar la interfaz global Storage del navegador.
-const VetStorage = (() => {
-  const KEYS = {
+// Se llama g_obj_vetStorage para no ocultar la interfaz global Storage del navegador.
+const g_obj_vetStorage = (() => {
+  const c_obj_CLAVES = {
     clasificaciones: 'vet_clasificaciones',
     medicamentos: 'vet_medicamentos',
-    seqClasificacion: 'vet_seq_clasificacion'
+    secuenciaClasificacion: 'vet_seq_clasificacion'
   };
 
-  const SEED_CLASIFICACIONES = [
+  const c_arr_CLASIFICACIONES_INICIALES = [
     { codigo: 1, nombre: 'Antibióticos' },
     { codigo: 2, nombre: 'Analgésicos' },
     { codigo: 3, nombre: 'Anestésicos' },
@@ -17,63 +17,64 @@ const VetStorage = (() => {
   ];
 
   // Medicamentos de ejemplo para probar la regla de "no borrar con datos asociados".
-  const SEED_MEDICAMENTOS = [
+  const c_arr_MEDICAMENTOS_INICIALES = [
     { id: 1, nombre: 'Amoxicilina', codigoClasificacion: 1 },
     { id: 2, nombre: 'Enrofloxacina', codigoClasificacion: 1 },
     { id: 3, nombre: 'Meloxicam', codigoClasificacion: 2 },
     { id: 4, nombre: 'Vacuna antirrábica', codigoClasificacion: 6 }
   ];
 
-  function read(key, fallback) {
+  function f_obj_leerDato(p_txt_clave, p_obj_valorPorDefecto) {
     try {
-      const raw = localStorage.getItem(key);
-      return raw === null ? fallback : JSON.parse(raw);
-    } catch (e) {
-      return fallback;
+      const v_jsn_datosGuardados = localStorage.getItem(p_txt_clave);
+      return v_jsn_datosGuardados === null ? p_obj_valorPorDefecto : JSON.parse(v_jsn_datosGuardados);
+    } catch {
+      return p_obj_valorPorDefecto;
     }
   }
 
   // Devuelve true si se guardó, false si el navegador lo impidió (cuota, modo privado…).
-  function write(key, value) {
+  function f_bol_guardarDato(p_txt_clave, p_obj_valor) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(p_txt_clave, JSON.stringify(p_obj_valor));
       return true;
-    } catch (e) {
-      console.warn('No se pudo guardar en localStorage', e);
+    } catch (p_obj_error) {
+      console.warn('No se pudo guardar en localStorage', p_obj_error);
       return false;
     }
   }
 
-  function seed() {
-    if (read(KEYS.clasificaciones, null) === null) {
-      write(KEYS.clasificaciones, SEED_CLASIFICACIONES);
-      write(KEYS.seqClasificacion, SEED_CLASIFICACIONES.length);
+  function f_cargarDatosIniciales() {
+    if (f_obj_leerDato(c_obj_CLAVES.clasificaciones, null) === null) {
+      f_bol_guardarDato(c_obj_CLAVES.clasificaciones, c_arr_CLASIFICACIONES_INICIALES);
+      f_bol_guardarDato(c_obj_CLAVES.secuenciaClasificacion, c_arr_CLASIFICACIONES_INICIALES.length);
     }
-    if (read(KEYS.medicamentos, null) === null) {
-      write(KEYS.medicamentos, SEED_MEDICAMENTOS);
+    if (f_obj_leerDato(c_obj_CLAVES.medicamentos, null) === null) {
+      f_bol_guardarDato(c_obj_CLAVES.medicamentos, c_arr_MEDICAMENTOS_INICIALES);
     }
   }
 
   // El siguiente código nunca puede chocar con uno existente, aunque la
   // secuencia guardada se haya perdido o dañado.
-  function calcularSiguiente() {
-    const seq = Number(read(KEYS.seqClasificacion, 0)) || 0;
-    const maxExistente = read(KEYS.clasificaciones, [])
-      .reduce((max, c) => Math.max(max, c.codigo), 0);
-    return Math.max(seq, maxExistente) + 1;
+  function f_ent_calcularSiguienteCodigo() {
+    const v_ent_secuencia = Number(f_obj_leerDato(c_obj_CLAVES.secuenciaClasificacion, 0)) || 0;
+    const v_ent_codigoMaximo = f_obj_leerDato(c_obj_CLAVES.clasificaciones, [])
+      .reduce((p_ent_maximo, it_clasificacion) => Math.max(p_ent_maximo, it_clasificacion.codigo), 0);
+    return Math.max(v_ent_secuencia, v_ent_codigoMaximo) + 1;
   }
 
-  seed();
+  f_cargarDatosIniciales();
 
   return {
-    getClasificaciones: () => read(KEYS.clasificaciones, []),
-    saveClasificaciones: (lista) => write(KEYS.clasificaciones, lista),
-    getMedicamentos: () => read(KEYS.medicamentos, []),
-    peekNextCodigo: calcularSiguiente,
-    takeNextCodigo() {
-      const next = calcularSiguiente();
-      write(KEYS.seqClasificacion, next);
-      return next;
+    f_arr_obtenerClasificaciones: () => f_obj_leerDato(c_obj_CLAVES.clasificaciones, []),
+    f_bol_guardarClasificaciones: (p_arr_clasificaciones) =>
+      f_bol_guardarDato(c_obj_CLAVES.clasificaciones, p_arr_clasificaciones),
+    f_arr_obtenerMedicamentos: () => f_obj_leerDato(c_obj_CLAVES.medicamentos, []),
+    f_ent_consultarSiguienteCodigo: f_ent_calcularSiguienteCodigo,
+    f_ent_asignarSiguienteCodigo() {
+      const v_ent_siguienteCodigo = f_ent_calcularSiguienteCodigo();
+      f_bol_guardarDato(c_obj_CLAVES.secuenciaClasificacion, v_ent_siguienteCodigo);
+      return v_ent_siguienteCodigo;
     }
   };
 })();

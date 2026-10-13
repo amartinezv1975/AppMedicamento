@@ -169,4 +169,22 @@ Registro de la práctica con un proyecto pequeño (script en Python que lee fact
 >
 > Momento de uso en el flujo: Claude termina la tarea → **`/diff`** (revisión propia) → `/code-review` (segunda opinión) → commit.
 
-**Pendiente:** inicializar git con un primer commit y continuar con el Paso 5 (subagentes).
+### Git y GitHub: subir el proyecto a un repositorio privado
+
+Se le pidió a Claude Code inicializar git y subir el proyecto a un repositorio de GitHub.
+
+**Revisiones previas de Claude** (solo lectura, sin cambiar nada):
+- Comprobó que **git** estuviera instalado y que el **nombre y correo** del usuario estuvieran configurados.
+- Con `git ls-remote <url>` comprobó que el repositorio **existía**, que estaba **vacío** y que el equipo tenía **acceso**.
+- Con `curl` a la **API de GitHub** confirmó que el repositorio es **privado**.
+
+**Comandos clave:**
+
+| Comando | Qué hace |
+|---|---|
+| `git remote add origin <url>` | Conecta el proyecto con GitHub. Le da el nombre **origin** a la dirección del repositorio. |
+| `git push -u origin main` | Sube el código. El `-u` deja la rama enlazada, así que en adelante basta con escribir `git push`. |
+
+**Qué observé:** Claude aplicó el paso **Explorar** también a git: antes de subir algo, verificó la configuración, el acceso y la privacidad del repositorio.
+
+**Pendiente:** usar `/diff` en la próxima HU y continuar con el Paso 5 (subagentes).

@@ -17,13 +17,13 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 
 ## Arquitectura
 
-- `index.html` es la estructura de una sola página: encabezado, área de contenido `main`, menú inferior fijo, dos ventanas emergentes compartidas y un aviso tipo toast. Las ventanas son `#modalForm`, para crear y editar, y `#modalConfirm`, que sirve como confirmación y también como aviso de solo lectura. Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: `js/storage.js` debe cargarse antes que los scripts de cada funcionalidad.
-- `js/storage.js` expone un objeto global `VetStorage` (una IIFE; no se llama `Storage` para no ocultar la interfaz del navegador) y es el único archivo que usa `localStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
+- `index.html` es la estructura de una sola página: encabezado, área de contenido `main`, menú inferior fijo, dos ventanas emergentes compartidas y un aviso tipo toast. Las ventanas son `#mdl-formulario`, para crear y editar, y `#mdl-confirmar`, que sirve como confirmación y también como aviso de solo lectura. Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: `js/storage.js` debe cargarse antes que los scripts de cada funcionalidad.
+- `js/storage.js` expone un objeto global `g_obj_vetStorage` (una IIFE; no se llama `Storage` para no ocultar la interfaz del navegador) y es el único archivo que usa `localStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
   - `vet_clasificaciones`: `[{ codigo, nombre }]`
   - `vet_medicamentos`: ejemplos `[{ id, nombre, codigoClasificacion }]`. Son temporales y sirven para probar la regla de "no borrar una clasificación con datos asociados" antes de que exista el módulo de Medicamentos. Reemplázalos cuando se construya ese módulo.
   - `vet_seq_clasificacion`: el último código asignado. Los códigos son consecutivos, automáticos y no editables, y no se reutilizan después de borrar. El siguiente código es el mayor entre esta secuencia y el código más alto existente, más 1, para que nunca choque.
-  - Las funciones `save*` devuelven `false` si el navegador no permite guardar; las pantallas deben mostrar un error en ese caso, no un mensaje de éxito.
-- Los scripts de cada funcionalidad, como `js/clasificaciones.js`, son IIFE independientes que vuelven a dibujar la pantalla desde `VetStorage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
+  - Las funciones `f_bol_guardar*` devuelven `false` si el navegador no permite guardar; las pantallas deben mostrar un error en ese caso, no un mensaje de éxito.
+- Los scripts de cada funcionalidad, como `js/clasificaciones.js`, son IIFE independientes que vuelven a dibujar la pantalla desde `g_obj_vetStorage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
 - Las pestañas **Medicamentos** y **Calcular** del menú inferior están desactivadas y reservadas para historias futuras.
 
 ## Reglas de negocio ya implementadas (HU-01 Clasificaciones)
@@ -34,6 +34,7 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 
 ## Convenciones
 
+- Todo nombre nuevo (JS, ids de HTML, clases y variables CSS, archivos) debe cumplir `estandar_nomenclatura_codigo.txt`. Después de escribir código, revísalo con el agente `revisor-nomenclatura`.
 - Diseño pensado primero para celular, centrado con `max-width: 480px`. Los colores del tema son variables CSS en `:root` dentro de `css/styles.css` (paleta veterinaria en verde azulado).
 - Las imágenes de veterinaria son SVG propios en `img/`. No agregues imágenes externas ni dependencias de CDN.
 - No uses `alert`, `confirm` ni `prompt`; reutiliza la ventana emergente propia y el aviso toast.
