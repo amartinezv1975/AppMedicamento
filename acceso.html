@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f8a7e">
+  <title>VetDosis - Acceso</title>
+  <link rel="icon" href="img/logo-vetdosis.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="vd-app vd-acceso">
+    <div class="vd-acceso__marca">
+      <img src="img/logo-vetdosis.svg" alt="" class="vd-acceso__logo">
+      <h1 class="vd-acceso__titulo">VetDosis</h1>
+      <p class="vd-acceso__subtitulo">Cálculo de medicamentos por peso</p>
+    </div>
+
+    <form id="frm-acceso" class="vd-acceso__tarjeta" novalidate>
+      <h2>Ingreso</h2>
+      <label class="vd-campo">
+        <span>Usuario <b class="vd-campo__obligatorio">*</b></span>
+        <input type="text" id="txt-login" name="login" maxlength="40" autocomplete="username"
+               autocapitalize="none" spellcheck="false" placeholder="Tu login" aria-describedby="lbl-error-login">
+        <small id="lbl-error-login" class="vd-campo__error" role="alert"></small>
+      </label>
+      <label class="vd-campo">
+        <span>Contraseña <b class="vd-campo__obligatorio">*</b></span>
+        <input type="password" id="txt-contrasena" name="contrasena" maxlength="60" autocomplete="current-password"
+               placeholder="Tu contraseña" aria-describedby="lbl-error-contrasena">
+        <small id="lbl-error-contrasena" class="vd-campo__error" role="alert"></small>
+      </label>
+      <button type="submit" id="btn-ingresar" class="vd-boton vd-boton--primario vd-boton--bloque">Ingresar</button>
+      <small id="lbl-error-acceso" class="vd-campo__error vd-acceso__error" role="alert"></small>
+    </form>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/acceso.js"></script>
+</body>
+</html>

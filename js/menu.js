@@ -28,15 +28,26 @@
       <nav id="nav-principal" class="vd-menu-lateral__panel" aria-label="Menú principal">
         <div class="vd-menu-lateral__encabezado">
           <img src="img/logo-vetdosis.svg" alt="" class="vd-app__logo">
-          <strong class="vd-menu-lateral__titulo">VetDosis</strong>
+          <span class="vd-menu-lateral__titulo">
+            <strong>VetDosis</strong>
+            <small id="lbl-usuario-sesion" class="vd-menu-lateral__usuario"></small>
+          </span>
           <button type="button" id="btn-cerrar-menu" class="vd-menu-lateral__cerrar" aria-label="Cerrar menú" data-cerrar-menu>✕</button>
         </div>
         <ul class="vd-menu-lateral__lista">${c_arr_OPCIONES_MENU.map(f_txt_crearOpcion).join('')}</ul>
+        <button type="button" id="btn-cerrar-sesion" class="vd-menu-lateral__opcion vd-menu-lateral__salir">
+          <span class="vd-menu-lateral__icono" aria-hidden="true">🚪</span>Cerrar sesión
+        </button>
       </nav>
     </div>`);
 
   const g_dom_btnAbrirMenu = document.getElementById('btn-abrir-menu');
   const g_dom_secMenuLateral = document.getElementById('sec-menu-lateral');
+  const g_dom_lblUsuarioSesion = document.getElementById('lbl-usuario-sesion');
+  const g_dom_btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+
+  const g_obj_sesion = g_obj_vetStorage.f_obj_obtenerSesion();
+  g_dom_lblUsuarioSesion.textContent = g_obj_sesion ? `👤 ${g_obj_sesion.login}` : '';
 
   function f_abrirMenu() {
     g_dom_secMenuLateral.hidden = false;
@@ -54,6 +65,11 @@
 
   function h_clickAbrirMenu() {
     f_abrirMenu();
+  }
+
+  function h_clickCerrarSesion() {
+    g_obj_vetStorage.f_cerrarSesion();
+    location.replace('acceso.html');
   }
 
   function h_clickMenu(p_obj_evento) {
@@ -82,5 +98,6 @@
 
   g_dom_btnAbrirMenu.addEventListener('click', h_clickAbrirMenu);
   g_dom_secMenuLateral.addEventListener('click', h_clickMenu);
+  g_dom_btnCerrarSesion.addEventListener('click', h_clickCerrarSesion);
   document.addEventListener('keydown', h_teclaMenu);
 })();

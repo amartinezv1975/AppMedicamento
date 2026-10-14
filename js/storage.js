@@ -5,7 +5,8 @@ const g_obj_vetStorage = (() => {
     clasificaciones: 'vet_clasificaciones',
     medicamentos: 'vet_medicamentos',
     secuenciaClasificacion: 'vet_seq_clasificacion',
-    secuenciaMedicamento: 'vet_seq_medicamento'
+    secuenciaMedicamento: 'vet_seq_medicamento',
+    sesion: 'vet_sesion' // en sessionStorage: se borra al cerrar la pestaña
   };
 
   const c_arr_CLASIFICACIONES_INICIALES = [
@@ -151,6 +152,35 @@ const g_obj_vetStorage = (() => {
     }
   }
 
+  // ---------- Sesión ----------
+  // Solo se guarda el login, nunca la contraseña. Por ahora no se valida contra ningún usuario.
+  function f_bol_iniciarSesion(p_txt_login) {
+    try {
+      sessionStorage.setItem(c_obj_CLAVES.sesion, JSON.stringify({ login: p_txt_login, inicio: new Date().toISOString() }));
+      return true;
+    } catch (p_obj_error) {
+      console.warn('No se pudo iniciar la sesión', p_obj_error);
+      return false;
+    }
+  }
+
+  function f_obj_obtenerSesion() {
+    try {
+      const v_jsn_sesion = sessionStorage.getItem(c_obj_CLAVES.sesion);
+      return v_jsn_sesion === null ? null : JSON.parse(v_jsn_sesion);
+    } catch {
+      return null;
+    }
+  }
+
+  function f_cerrarSesion() {
+    try {
+      sessionStorage.removeItem(c_obj_CLAVES.sesion);
+    } catch {
+      // Si el navegador no deja tocar sessionStorage, tampoco había sesión guardada.
+    }
+  }
+
   f_cargarDatosIniciales();
 
   return {
@@ -172,6 +202,10 @@ const g_obj_vetStorage = (() => {
 
     f_arr_obtenerViasAdministracion: () => c_arr_VIAS_ADMINISTRACION,
     f_arr_obtenerPresentaciones: () => c_arr_PRESENTACIONES,
-    f_arr_obtenerCondicionesAlmacenamiento: () => c_arr_CONDICIONES_ALMACENAMIENTO
+    f_arr_obtenerCondicionesAlmacenamiento: () => c_arr_CONDICIONES_ALMACENAMIENTO,
+
+    f_bol_iniciarSesion,
+    f_obj_obtenerSesion,
+    f_cerrarSesion
   };
 })();

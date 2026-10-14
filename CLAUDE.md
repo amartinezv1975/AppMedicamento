@@ -10,6 +10,7 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 
 - Abre `index.html` directamente en el navegador, o usa un servidor local:
   `python -m http.server 5500` → `http://localhost:5500/index.html` (cada opción tiene su página: `clasificaciones.html`, `medicamentos.html`)
+- La primera pantalla es `acceso.html`: cualquier login y contraseña no vacíos sirven para entrar. Las páginas internas redirigen allí si no hay sesión en la pestaña.
 - La automatización del navegador (claude-in-chrome) no puede abrir URLs `file://`. Para verificar en Chrome, usa el servidor local.
 - No hay pruebas automáticas. Las funcionalidades se verifican usando los botones reales en el navegador, con clics o con un script, en una ventana del tamaño de un celular.
 - Los datos se guardan en `localStorage`. Para volver a los datos de ejemplo, borra las llaves `vet_*` y recarga:
@@ -17,13 +18,15 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 
 ## Arquitectura
 
+- `acceso.html` + `js/acceso.js`: pantalla de ingreso. Exige login y contraseña, pero **todavía no los valida** contra ningún usuario. Guarda solo el login (nunca la contraseña) en `sessionStorage` (`vet_sesion`) y va a `index.html`.
+- `js/sesion.js` protege las páginas internas: se carga en el `<head>`, justo después de `js/storage.js` (que por eso también va en el `<head>`), y redirige a `acceso.html` antes de dibujar si no hay sesión. Toda página interna nueva debe incluir esas dos etiquetas.
 - Una página HTML por opción, todas con el mismo encabezado (botón ☰ `#btn-abrir-menu`, logo y título):
   - `index.html`: inicio, con tarjetas de acceso a cada opción y el total de registros (`js/inicio.js`).
   - `clasificaciones.html` y `medicamentos.html`: tabla, ventana para crear y editar (`#mdl-formulario-clasificacion`, `#mdl-formulario-medicamento`), `#mdl-confirmar` (confirmación y también aviso de solo lectura) y el aviso tipo toast `#sec-aviso`.
   - El `<body data-pagina="...">` indica qué opción del menú se marca como activa. Los ids llevan el sufijo de su opción (`btn-anterior-medicamentos`).
-- Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: `js/storage.js`, `js/menu.js`, `js/interfaz.js` y luego el script de la página.
-- `js/menu.js` arma el menú lateral (hamburguesa) en todas las páginas desde una sola lista, `c_arr_OPCIONES_MENU`. Para agregar una opción: súmala a esa lista, crea su `.html` copiando el encabezado de otra página y ponle su `data-pagina`. Se cierra con ✕, Escape o tocando el fondo.
-- `js/storage.js` expone un objeto global `g_obj_vetStorage` (una IIFE; no se llama `Storage` para no ocultar la interfaz del navegador) y es el único archivo que usa `localStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
+- Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: en el `<head>` `js/storage.js` y `js/sesion.js`; al final del `<body>` `js/menu.js`, `js/interfaz.js` y luego el script de la página.
+- `js/menu.js` arma el menú lateral (hamburguesa) en todas las páginas desde una sola lista, `c_arr_OPCIONES_MENU`. Para agregar una opción: súmala a esa lista, crea su `.html` copiando el encabezado de otra página y ponle su `data-pagina`. Se cierra con ✕, Escape o tocando el fondo. Muestra el login de la sesión y la opción "Cerrar sesión", que vuelve a `acceso.html`.
+- `js/storage.js` expone un objeto global `g_obj_vetStorage` (una IIFE; no se llama `Storage` para no ocultar la interfaz del navegador) y es el único archivo que usa `localStorage` y `sessionStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
   - `vet_clasificaciones`: `[{ codigo, nombre }]`
   - `vet_medicamentos`: `[{ id, nombre, codigoClasificacion, viaAdministracion, presentacion, almacenamiento: [] }]`, con 20 medicamentos de ejemplo. La semilla referencia la clasificación por nombre y la resuelve a su código al cargar; si falta (p. ej. Antiparasitarios), la crea. Si encuentra los 4 medicamentos temporales de antes de HU-02 (sin `viaAdministracion`), los reemplaza por la semilla.
   - `vet_seq_clasificacion` y `vet_seq_medicamento`: el último código asignado. Los códigos son consecutivos, automáticos y no editables, y no se reutilizan después de borrar. El siguiente código es el mayor entre la secuencia y el código más alto existente, más 1, para que nunca choque.

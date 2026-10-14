@@ -200,7 +200,8 @@ body {
   color: var(--vd-color-blanco);
   background: linear-gradient(135deg, var(--vd-color-primario), var(--vd-color-primario-oscuro));
 }
-.vd-menu-lateral__titulo { flex: 1; font-size: 1.15rem; letter-spacing: 0.5px; }
+.vd-menu-lateral__titulo { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 1.15rem; letter-spacing: 0.5px; }
+.vd-menu-lateral__usuario { font-size: 0.78rem; letter-spacing: 0; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vd-menu-lateral__cerrar {
   width: 40px;
   height: 40px;
@@ -234,7 +235,44 @@ body {
 .vd-menu-lateral__opcion.es-desactivado { opacity: 0.45; cursor: not-allowed; }
 .vd-menu-lateral__opcion.es-desactivado:hover { background: transparent; }
 .vd-menu-lateral__icono { width: 28px; font-size: 1.3rem; text-align: center; }
+.vd-menu-lateral__salir {
+  margin: auto 10px 16px;
+  border: none;
+  border-top: 1px solid var(--vd-color-borde);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  color: var(--vd-color-peligro);
+  cursor: pointer;
+}
+.vd-menu-lateral__salir:hover { background: var(--vd-color-peligro-suave); }
 .vd-menu-lateral__detalle { margin-left: auto; font-size: 0.72rem; font-weight: 400; color: var(--vd-color-texto-suave); }
+
+/* Pantalla de acceso */
+.vd-acceso { justify-content: center; gap: 20px; padding: 32px 16px; }
+.vd-acceso__marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px 24px;
+  border-radius: var(--vd-radio-tarjeta);
+  color: var(--vd-color-blanco);
+  background: linear-gradient(135deg, var(--vd-color-primario), var(--vd-color-primario-oscuro));
+  box-shadow: var(--vd-sombra-tarjeta);
+}
+.vd-acceso__logo { width: 72px; height: 72px; }
+.vd-acceso__titulo { margin: 10px 0 0; font-size: 1.6rem; letter-spacing: 0.5px; }
+.vd-acceso__subtitulo { margin: 4px 0 0; font-size: 0.85rem; opacity: 0.85; }
+.vd-acceso__tarjeta {
+  padding: 20px 16px 12px;
+  border-top: 5px solid var(--vd-color-acento);
+  border-radius: var(--vd-radio-tarjeta);
+  background: var(--vd-color-tarjeta);
+  box-shadow: var(--vd-sombra-tarjeta);
+}
+.vd-acceso__tarjeta h2 { margin: 0 0 14px; font-size: 1.15rem; color: var(--vd-color-primario-oscuro); }
+.vd-acceso__error { text-align: center; }
 
 /* Tarjetas de la página de inicio */
 .vd-tarjeta-opcion {
