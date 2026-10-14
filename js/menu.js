@@ -1,4 +1,4 @@
-// Menú hamburguesa compartido por todas las páginas.
+// Menú hamburguesa y datos de la sesión en el encabezado, compartidos por todas las páginas internas.
 // Las opciones se definen solo aquí; la opción activa sale de <body data-pagina="...">.
 (() => {
   const c_arr_OPCIONES_MENU = [
@@ -28,17 +28,18 @@
       <nav id="nav-principal" class="vd-menu-lateral__panel" aria-label="Menú principal">
         <div class="vd-menu-lateral__encabezado">
           <img src="img/logo-vetdosis.svg" alt="" class="vd-app__logo">
-          <span class="vd-menu-lateral__titulo">
-            <strong>VetDosis</strong>
-            <small id="lbl-usuario-sesion" class="vd-menu-lateral__usuario"></small>
-          </span>
+          <strong class="vd-menu-lateral__titulo">VetDosis</strong>
           <button type="button" id="btn-cerrar-menu" class="vd-menu-lateral__cerrar" aria-label="Cerrar menú" data-cerrar-menu>✕</button>
         </div>
         <ul class="vd-menu-lateral__lista">${c_arr_OPCIONES_MENU.map(f_txt_crearOpcion).join('')}</ul>
-        <button type="button" id="btn-cerrar-sesion" class="vd-menu-lateral__opcion vd-menu-lateral__salir">
-          <span class="vd-menu-lateral__icono" aria-hidden="true">🚪</span>Cerrar sesión
-        </button>
       </nav>
+    </div>`);
+
+  // Arriba a la derecha del encabezado: login conectado y, debajo, cerrar sesión.
+  document.querySelector('.vd-app__encabezado').insertAdjacentHTML('beforeend', `
+    <div class="vd-app__sesion">
+      <span id="lbl-usuario-sesion" class="vd-app__usuario"></span>
+      <button type="button" id="btn-cerrar-sesion" class="vd-app__cerrar-sesion">Cerrar sesión</button>
     </div>`);
 
   const g_dom_btnAbrirMenu = document.getElementById('btn-abrir-menu');
@@ -48,6 +49,7 @@
 
   const g_obj_sesion = g_obj_vetStorage.f_obj_obtenerSesion();
   g_dom_lblUsuarioSesion.textContent = g_obj_sesion ? `👤 ${g_obj_sesion.login}` : '';
+  g_dom_lblUsuarioSesion.title = g_obj_sesion ? `Usuario conectado: ${g_obj_sesion.login}` : '';
 
   function f_abrirMenu() {
     g_dom_secMenuLateral.hidden = false;

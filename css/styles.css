@@ -54,6 +54,40 @@ body {
 .vd-app__titulo { margin: 0; font-size: 1.3rem; letter-spacing: 0.5px; }
 .vd-app__subtitulo { margin: 2px 0 0; font-size: 0.8rem; opacity: 0.85; }
 
+/* Sesión en el encabezado (arriba a la derecha) */
+.vd-app__sesion {
+  margin-left: auto;
+  max-width: 42%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* el botón toma el ancho del login: los dos terminan en el mismo borde derecho */
+  gap: 4px;
+}
+.vd-app__usuario {
+  max-width: 100%;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.vd-app__cerrar-sesion {
+  min-height: 30px;
+  padding: 4px 10px;
+  border: 1px solid var(--vd-color-blanco-translucido);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--vd-color-blanco);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.vd-app__cerrar-sesion:hover { background: var(--vd-color-blanco-translucido); }
+
 /* Botón hamburguesa */
 .vd-boton-menu {
   flex-shrink: 0;
@@ -200,8 +234,7 @@ body {
   color: var(--vd-color-blanco);
   background: linear-gradient(135deg, var(--vd-color-primario), var(--vd-color-primario-oscuro));
 }
-.vd-menu-lateral__titulo { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 1.15rem; letter-spacing: 0.5px; }
-.vd-menu-lateral__usuario { font-size: 0.78rem; letter-spacing: 0; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vd-menu-lateral__titulo { flex: 1; font-size: 1.15rem; letter-spacing: 0.5px; }
 .vd-menu-lateral__cerrar {
   width: 40px;
   height: 40px;
@@ -235,18 +268,6 @@ body {
 .vd-menu-lateral__opcion.es-desactivado { opacity: 0.45; cursor: not-allowed; }
 .vd-menu-lateral__opcion.es-desactivado:hover { background: transparent; }
 .vd-menu-lateral__icono { width: 28px; font-size: 1.3rem; text-align: center; }
-.vd-menu-lateral__salir {
-  margin: auto 10px 16px;
-  border: none;
-  border-top: 1px solid var(--vd-color-borde);
-  border-radius: 0;
-  background: transparent;
-  font: inherit;
-  font-weight: 600;
-  color: var(--vd-color-peligro);
-  cursor: pointer;
-}
-.vd-menu-lateral__salir:hover { background: var(--vd-color-peligro-suave); }
 .vd-menu-lateral__detalle { margin-left: auto; font-size: 0.72rem; font-weight: 400; color: var(--vd-color-texto-suave); }
 
 /* Pantalla de acceso */
