@@ -3,6 +3,7 @@
   --vd-color-primario-oscuro: #0b6f65;
   --vd-color-primario-suave: #e3f4f1;
   --vd-color-acento: #f4a259;
+  --vd-color-acento-suave: #fdf1e5;
   --vd-color-peligro: #d64545;
   --vd-color-peligro-suave: #fdecec;
   --vd-color-texto: #1f2d2b;
@@ -181,6 +182,9 @@ body {
 .vd-tabla td.vd-tabla__celda--codigo { text-align: center; font-variant-numeric: tabular-nums; color: var(--vd-color-texto-suave); font-weight: 600; }
 .vd-tabla__encabezado--acciones { width: 100px; text-align: center !important; }
 .vd-tabla td.vd-tabla__celda--acciones { text-align: center; white-space: nowrap; }
+.vd-tabla__encabezado--dosis { width: 96px; text-align: center !important; }
+.vd-tabla td.vd-tabla__celda--dosis { text-align: center; white-space: nowrap; font-weight: 700; color: var(--vd-color-primario-oscuro); font-variant-numeric: tabular-nums; }
+.vd-tabla__encabezado--quitar { width: 64px; text-align: center !important; }
 .vd-tabla__detalle { display: block; margin-top: 3px; font-size: 0.76rem; line-height: 1.35; color: var(--vd-color-texto-suave); }
 
 .vd-boton-icono {
@@ -318,6 +322,36 @@ a.vd-tarjeta-opcion:active { transform: scale(0.98); }
 .vd-tarjeta-opcion__flecha { font-size: 1.8rem; color: var(--vd-color-primario); }
 .vd-tarjeta-opcion--desactivada { opacity: 0.5; border-left-color: var(--vd-color-borde); }
 
+/* Calcular dosis */
+.vd-calculo {
+  padding: 16px;
+  border-radius: var(--vd-radio-tarjeta);
+  background: var(--vd-color-tarjeta);
+  box-shadow: var(--vd-sombra-tarjeta);
+}
+.vd-calculo__titulo { margin: 0 0 12px; font-size: 1rem; color: var(--vd-color-primario-oscuro); }
+.vd-calculo__titulo:not(:first-child) { margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--vd-color-borde); }
+.vd-calculo__ayuda { margin: -6px 0 14px; font-size: 0.8rem; color: var(--vd-color-texto-suave); }
+.vd-calculo__encabezado-resultados {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 14px 16px 10px;
+}
+.vd-calculo__encabezado-resultados .vd-calculo__titulo { margin: 0; }
+.vd-calculo__resumen { font-size: 0.85rem; font-weight: 600; color: var(--vd-color-texto-suave); }
+
+.vd-nota {
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 5px solid var(--vd-color-acento);
+  border-radius: 10px;
+  background: var(--vd-color-acento-suave);
+  font-size: 0.85rem;
+}
+
 /* Modal tipo hoja inferior */
 .vd-modal { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
 .vd-modal[hidden] { display: none; }
@@ -354,6 +388,11 @@ a.vd-tarjeta-opcion:active { transform: scale(0.98); }
 .vd-campo select.es-invalido { border-color: var(--vd-color-peligro); }
 .vd-campo__error { display: block; min-height: 1.1em; margin-top: 4px; color: var(--vd-color-peligro); font-size: 0.8rem; }
 .vd-campo__obligatorio { color: var(--vd-color-peligro); }
+
+.vd-campo[hidden] { display: none; }
+.vd-campo__etiqueta { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+/* Número + unidad en la misma línea (dosis, concentración) */
+.vd-campo__grupo { display: grid; grid-template-columns: 1fr 104px; gap: 8px; }
 
 .vd-formulario__fila { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 

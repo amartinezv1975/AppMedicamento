@@ -9,7 +9,7 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 ## Ejecución
 
 - Abre `index.html` directamente en el navegador, o usa un servidor local:
-  `python -m http.server 5500` → `http://localhost:5500/index.html` (cada opción tiene su página: `clasificaciones.html`, `medicamentos.html`)
+  `python -m http.server 5500` → `http://localhost:5500/index.html` (cada opción tiene su página: `clasificaciones.html`, `medicamentos.html`, `calculo-dosis.html`)
 - La primera pantalla es `acceso.html`: cualquier login y contraseña no vacíos sirven para entrar. Las páginas internas redirigen allí si no hay sesión en la pestaña.
 - La automatización del navegador (claude-in-chrome) no puede abrir URLs `file://`. Para verificar en Chrome, usa el servidor local.
 - No hay pruebas automáticas. Las funcionalidades se verifican usando los botones reales en el navegador, con clics o con un script, en una ventana del tamaño de un celular.
@@ -23,6 +23,7 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 - Una página HTML por opción, todas con el mismo encabezado (botón ☰ `#btn-abrir-menu`, logo y título):
   - `index.html`: inicio, con tarjetas de acceso a cada opción y el total de registros (`js/inicio.js`).
   - `clasificaciones.html` y `medicamentos.html`: tabla, ventana para crear y editar (`#mdl-formulario-clasificacion`, `#mdl-formulario-medicamento`), `#mdl-confirmar` (confirmación y también aviso de solo lectura) y el aviso tipo toast `#sec-aviso`.
+  - `calculo-dosis.html` (`js/calculo-dosis.js`): formulario del paciente y del medicamento, tabla de dosis calculadas, nota de referencia y botón "Blanquear pantalla". Solo usa `#mdl-confirmar` y `#sec-aviso`.
   - El `<body data-pagina="...">` indica qué opción del menú se marca como activa. Los ids llevan el sufijo de su opción (`btn-anterior-medicamentos`).
 - Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: en el `<head>` `js/storage.js` y `js/sesion.js`; al final del `<body>` `js/menu.js`, `js/interfaz.js` y luego el script de la página.
 - `js/menu.js` arma el menú lateral (hamburguesa) en todas las páginas desde una sola lista, `c_arr_OPCIONES_MENU`. Para agregar una opción: súmala a esa lista, crea su `.html` copiando el encabezado de otra página y ponle su `data-pagina`. Se cierra con ✕, Escape o tocando el fondo. También agrega arriba a la derecha del encabezado el login conectado y, debajo, el botón "Cerrar sesión", que borra la sesión y vuelve a `acceso.html`.
@@ -34,7 +35,7 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
   - Las funciones `f_bol_guardar*` devuelven `false` si el navegador no permite guardar; las pantallas deben mostrar un error en ese caso, no un mensaje de éxito.
 - `js/interfaz.js` expone `g_obj_vetInterfaz` con lo compartido entre las páginas de mantenimiento: aviso toast, abrir/cerrar ventanas con foco atrapado, `f_mostrarConfirmacion`, limpieza/normalización de nombres y escape de HTML.
 - Los scripts de cada funcionalidad (`js/clasificaciones.js`, `js/medicamentos.js`) son IIFE independientes que vuelven a dibujar la pantalla desde `g_obj_vetStorage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
-- La opción **Calcular dosis** aparece desactivada ("Próximamente") en el menú y en el inicio; está reservada para una historia futura.
+- `js/calculo-dosis.js` es la excepción: no guarda nada. Los cálculos viven en memoria (`g_arr_dosisCalculadas`) y se pierden al salir o recargar; no hay historial.
 
 ## Reglas de negocio ya implementadas (HU-01 Clasificaciones)
 
@@ -48,6 +49,15 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 - Campos: nombre, clasificación (lista con las clasificaciones vigentes), vía de administración (una: oral, intramuscular, intravenosa, subcutánea), presentación (ml, gramos, pastillas) y condiciones de almacenamiento (varias: temperatura ambiente, refrigeración, cadena de frío, proteger de la humedad).
 - Todos los campos son obligatorios, con al menos una condición de almacenamiento. Nombres repetidos se rechazan con la misma normalización de HU-01. "Temperatura ambiente" no se combina con "Refrigeración" ni "Cadena de frío".
 - Borrar un medicamento pide confirmación y no tiene restricciones.
+
+## Reglas de negocio ya implementadas (HU-03 Calcular dosis)
+
+- Se ingresan nombre y peso (kg) del paciente y luego, uno por uno, los medicamentos: se elige de la lista de medicamentos registrados (todos, sin importar su presentación), con dosis recomendada (mg/kg o ml/kg) y concentración (mg/ml o %).
+- Fórmula: `ml = (peso kg × dosis mg/kg) / concentración mg/ml`. Una concentración en % se convierte con 1 % = 10 mg/ml (máximo 100 %). Con dosis en ml/kg, `ml = peso × dosis` y el campo de concentración se esconde.
+- El resultado siempre se muestra en ml con 2 decimales; si es menor que 0,005 se muestra "< 0,01 ml". Los datos ingresados se muestran sin redondear.
+- Números con coma o punto decimal, mayores que 0; el peso no tiene tope. Un mismo medicamento no se repite en la lista.
+- Con medicamentos en la lista, el nombre y el peso del paciente quedan bloqueados. Cada fila se puede quitar. Los resultados **no se suman**, porque son medicamentos distintos.
+- "Blanquear pantalla" pide confirmación y borra el paciente y la lista. Siempre se muestra la nota "Resultado de referencia; verifique antes de administrar".
 
 ## Convenciones
 

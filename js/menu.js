@@ -5,7 +5,7 @@
     { pagina: 'inicio', archivo: 'index.html', icono: '🏠', texto: 'Inicio' },
     { pagina: 'clasificaciones', archivo: 'clasificaciones.html', icono: '🏷️', texto: 'Clasificaciones' },
     { pagina: 'medicamentos', archivo: 'medicamentos.html', icono: '💉', texto: 'Medicamentos' },
-    { pagina: 'calcular', archivo: null, icono: '🐾', texto: 'Calcular dosis', detalle: 'Próximamente' }
+    { pagina: 'calculo-dosis', archivo: 'calculo-dosis.html', icono: '🐾', texto: 'Calcular dosis' }
   ];
   const c_txt_PAGINA_ACTUAL = document.body.dataset.pagina;
   const c_txt_SELECTOR_ENFOCABLES = 'a[href], button';

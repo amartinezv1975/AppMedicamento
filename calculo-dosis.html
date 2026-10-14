@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f8a7e">
+  <title>VetDosis - Calcular dosis</title>
+  <link rel="icon" href="img/logo-vetdosis.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/storage.js"></script>
+  <script src="js/sesion.js"></script>
+</head>
+<body data-pagina="calculo-dosis">
+  <div class="vd-app">
+    <header class="vd-app__encabezado">
+      <button type="button" id="btn-abrir-menu" class="vd-boton-menu" aria-label="Abrir menú"
+              aria-expanded="false" aria-controls="sec-menu-lateral">
+        <span class="vd-boton-menu__barra"></span>
+        <span class="vd-boton-menu__barra"></span>
+        <span class="vd-boton-menu__barra"></span>
+      </button>
+      <img src="img/logo-vetdosis.svg" alt="" class="vd-app__logo">
+      <div>
+        <h1 class="vd-app__titulo">VetDosis</h1>
+        <p class="vd-app__subtitulo">Cálculo de medicamentos por peso</p>
+      </div>
+    </header>
+
+    <main class="vd-app__contenido">
+      <div class="vd-presentacion">
+        <div class="vd-presentacion__texto">
+          <h2>Calcular dosis</h2>
+          <p>Ingresa el paciente y agrega sus medicamentos uno por uno.</p>
+        </div>
+        <span class="vd-presentacion__icono" aria-hidden="true">🐾</span>
+      </div>
+
+      <form id="frm-calculo-dosis" class="vd-calculo" novalidate>
+        <h3 class="vd-calculo__titulo">Paciente</h3>
+        <div class="vd-formulario__fila">
+          <label class="vd-campo">
+            <span>Nombre <b class="vd-campo__obligatorio">*</b></span>
+            <input type="text" id="txt-nombre-paciente" name="nombre-paciente" maxlength="60" autocomplete="off"
+                   placeholder="Ej: Firulais" aria-describedby="lbl-error-nombre-paciente">
+            <small id="lbl-error-nombre-paciente" class="vd-campo__error" role="alert"></small>
+          </label>
+          <label class="vd-campo">
+            <span>Peso (kg) <b class="vd-campo__obligatorio">*</b></span>
+            <input type="text" id="txt-peso-paciente" name="peso-paciente" inputmode="decimal" autocomplete="off"
+                   placeholder="Ej: 12,5" aria-describedby="lbl-error-peso-paciente">
+            <small id="lbl-error-peso-paciente" class="vd-campo__error" role="alert"></small>
+          </label>
+        </div>
+        <p id="lbl-paciente-bloqueado" class="vd-calculo__ayuda" hidden>
+          Para cambiar el paciente, blanquea la pantalla.
+        </p>
+
+        <h3 class="vd-calculo__titulo">Medicamento</h3>
+        <label class="vd-campo">
+          <span>Medicamento <b class="vd-campo__obligatorio">*</b></span>
+          <select id="sel-medicamento-dosis" name="medicamento-dosis" aria-describedby="lbl-error-medicamento-dosis"></select>
+          <small id="lbl-error-medicamento-dosis" class="vd-campo__error" role="alert"></small>
+        </label>
+
+        <div class="vd-campo">
+          <label for="txt-dosis-recomendada" class="vd-campo__etiqueta">
+            Dosis recomendada <b class="vd-campo__obligatorio">*</b>
+          </label>
+          <div class="vd-campo__grupo">
+            <input type="text" id="txt-dosis-recomendada" name="dosis-recomendada" inputmode="decimal" autocomplete="off"
+                   placeholder="Ej: 0,2" aria-describedby="lbl-error-dosis-recomendada">
+            <select id="sel-unidad-dosis" name="unidad-dosis" aria-label="Unidad de la dosis">
+              <option value="mgKg">mg/kg</option>
+              <option value="mlKg">ml/kg</option>
+            </select>
+          </div>
+          <small id="lbl-error-dosis-recomendada" class="vd-campo__error" role="alert"></small>
+        </div>
+
+        <div id="sec-concentracion-farmaco" class="vd-campo">
+          <label for="txt-concentracion-farmaco" class="vd-campo__etiqueta">
+            Concentración del fármaco <b class="vd-campo__obligatorio">*</b>
+          </label>
+          <div class="vd-campo__grupo">
+            <input type="text" id="txt-concentracion-farmaco" name="concentracion-farmaco" inputmode="decimal" autocomplete="off"
+                   placeholder="Ej: 10" aria-describedby="lbl-error-concentracion-farmaco">
+            <select id="sel-unidad-concentracion" name="unidad-concentracion" aria-label="Unidad de la concentración">
+              <option value="mgMl">mg/ml</option>
+              <option value="porcentaje">%</option>
+            </select>
+          </div>
+          <small id="lbl-error-concentracion-farmaco" class="vd-campo__error" role="alert"></small>
+        </div>
+
+        <button type="submit" id="btn-calcular-dosis" class="vd-boton vd-boton--primario vd-boton--bloque">
+          <span aria-hidden="true">🧮</span> Calcular
+        </button>
+      </form>
+
+      <section class="vd-tarjeta-tabla" aria-labelledby="lbl-titulo-resultados">
+        <div class="vd-calculo__encabezado-resultados">
+          <h3 id="lbl-titulo-resultados" class="vd-calculo__titulo">Dosis a suministrar</h3>
+          <span id="lbl-resumen-paciente" class="vd-calculo__resumen"></span>
+        </div>
+        <table class="vd-tabla" aria-label="Dosis calculadas para el paciente">
+          <thead>
+            <tr>
+              <th>Medicamento</th>
+              <th class="vd-tabla__encabezado--dosis">Dosis</th>
+              <th class="vd-tabla__encabezado--quitar">Quitar</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-dosis-cuerpo"></tbody>
+        </table>
+
+        <div id="sec-estado-vacio-dosis" class="vd-estado-vacio">
+          <p>Aún no hay medicamentos calculados para este paciente.</p>
+        </div>
+      </section>
+
+      <p class="vd-nota" role="note">
+        <span aria-hidden="true">⚠️</span>
+        Resultado de referencia; verifique antes de administrar.
+      </p>
+
+      <button type="button" id="btn-limpiar-calculo" class="vd-boton vd-boton--secundario vd-boton--bloque">
+        <span aria-hidden="true">🧹</span> Blanquear pantalla
+      </button>
+    </main>
+  </div>
+
+  <!-- Modal confirmación -->
+  <div id="mdl-confirmar" class="vd-modal js-modal" hidden>
+    <div class="vd-modal__fondo" data-cerrar></div>
+    <div class="vd-modal__hoja vd-confirmacion" role="alertdialog" aria-modal="true" aria-labelledby="lbl-titulo-confirmar" aria-describedby="lbl-texto-confirmar">
+      <div id="lbl-icono-confirmar" class="vd-confirmacion__icono" aria-hidden="true">🧹</div>
+      <h3 id="lbl-titulo-confirmar"></h3>
+      <p id="lbl-texto-confirmar" class="vd-confirmacion__texto"></p>
+      <div class="vd-modal__acciones">
+        <button type="button" id="btn-cancelar-confirmar" class="vd-boton vd-boton--secundario" data-cerrar>Cancelar</button>
+        <button type="button" id="btn-aceptar-confirmar" class="vd-boton vd-boton--peligro">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-aviso" class="vd-aviso" role="status" aria-live="polite"></div>
+
+  <script src="js/menu.js"></script>
+  <script src="js/interfaz.js"></script>
+  <script src="js/calculo-dosis.js"></script>
+</body>
+</html>
