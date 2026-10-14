@@ -4,13 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0f8a7e">
-  <title>VetDosis - Clasificaciones</title>
+  <title>VetDosis</title>
   <link rel="icon" href="img/logo-vetdosis.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body data-pagina="inicio">
   <div class="vd-app">
     <header class="vd-app__encabezado">
+      <button type="button" id="btn-abrir-menu" class="vd-boton-menu" aria-label="Abrir menú"
+              aria-expanded="false" aria-controls="sec-menu-lateral">
+        <span class="vd-boton-menu__barra"></span>
+        <span class="vd-boton-menu__barra"></span>
+        <span class="vd-boton-menu__barra"></span>
+      </button>
       <img src="img/logo-vetdosis.svg" alt="" class="vd-app__logo">
       <div>
         <h1 class="vd-app__titulo">VetDosis</h1>
@@ -19,88 +25,46 @@
     </header>
 
     <main class="vd-app__contenido">
-      <section class="vd-presentacion">
+      <div class="vd-presentacion">
         <div class="vd-presentacion__texto">
-          <h2>Clasificaciones</h2>
-          <p>Administra las clasificaciones de medicamentos veterinarios.</p>
+          <h2>Bienvenido</h2>
+          <p>Elige una opción aquí o desde el menú ☰.</p>
         </div>
-        <span class="vd-presentacion__icono" aria-hidden="true">💊</span>
-      </section>
+        <span class="vd-presentacion__icono" aria-hidden="true">🐾</span>
+      </div>
 
-      <button type="button" id="btn-nueva-clasificacion" class="vd-boton vd-boton--primario vd-boton--bloque">
-        <span aria-hidden="true">＋</span> Nueva clasificación
-      </button>
+      <a href="clasificaciones.html" class="vd-tarjeta-opcion">
+        <span class="vd-tarjeta-opcion__icono" aria-hidden="true">🏷️</span>
+        <span class="vd-tarjeta-opcion__texto">
+          <strong class="vd-tarjeta-opcion__titulo">Clasificaciones</strong>
+          <span>Agrupa los medicamentos por tipo.</span>
+          <small id="lbl-total-clasificaciones" class="vd-tarjeta-opcion__total"></small>
+        </span>
+        <span class="vd-tarjeta-opcion__flecha" aria-hidden="true">›</span>
+      </a>
 
-      <div class="vd-tarjeta-tabla">
-        <table class="vd-tabla" aria-label="Clasificaciones de medicamentos">
-          <thead>
-            <tr>
-              <th class="vd-tabla__encabezado--codigo">Código</th>
-              <th>Nombre</th>
-              <th class="vd-tabla__encabezado--acciones">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbl-clasificaciones-cuerpo"></tbody>
-        </table>
+      <a href="medicamentos.html" class="vd-tarjeta-opcion">
+        <span class="vd-tarjeta-opcion__icono" aria-hidden="true">💉</span>
+        <span class="vd-tarjeta-opcion__texto">
+          <strong class="vd-tarjeta-opcion__titulo">Medicamentos</strong>
+          <span>Registra los medicamentos de uso veterinario.</span>
+          <small id="lbl-total-medicamentos" class="vd-tarjeta-opcion__total"></small>
+        </span>
+        <span class="vd-tarjeta-opcion__flecha" aria-hidden="true">›</span>
+      </a>
 
-        <div id="sec-estado-vacio" class="vd-estado-vacio" hidden>
-          <img src="img/ilustracion-vacio.svg" alt="">
-          <p>Aún no hay clasificaciones registradas.</p>
-        </div>
-
-        <nav class="vd-paginador" aria-label="Paginación">
-          <button type="button" id="btn-anterior" class="vd-boton vd-boton--secundario">« Anterior</button>
-          <span id="lbl-info-pagina" class="vd-paginador__info"></span>
-          <button type="button" id="btn-siguiente" class="vd-boton vd-boton--secundario">Siguiente »</button>
-        </nav>
+      <div class="vd-tarjeta-opcion vd-tarjeta-opcion--desactivada" aria-disabled="true">
+        <span class="vd-tarjeta-opcion__icono" aria-hidden="true">🐾</span>
+        <span class="vd-tarjeta-opcion__texto">
+          <strong class="vd-tarjeta-opcion__titulo">Calcular dosis</strong>
+          <span>Próximamente.</span>
+        </span>
       </div>
     </main>
-
-    <nav class="vd-menu-inferior" aria-label="Menú principal">
-      <a href="#" class="vd-menu-inferior__opcion es-activo" aria-current="page"><span aria-hidden="true">🏷️</span>Clasificaciones</a>
-      <a class="vd-menu-inferior__opcion es-desactivado" aria-disabled="true"><span aria-hidden="true">💉</span>Medicamentos</a>
-      <a class="vd-menu-inferior__opcion es-desactivado" aria-disabled="true"><span aria-hidden="true">🐾</span>Calcular</a>
-    </nav>
   </div>
-
-  <!-- Modal crear / editar -->
-  <div id="mdl-formulario" class="vd-modal js-modal" hidden>
-    <div class="vd-modal__fondo" data-cerrar></div>
-    <form id="frm-clasificacion" class="vd-modal__hoja" role="dialog" aria-modal="true" aria-labelledby="lbl-titulo-formulario" novalidate>
-      <h3 id="lbl-titulo-formulario">Nueva clasificación</h3>
-      <label class="vd-campo">
-        <span>Código</span>
-        <input type="text" id="txt-codigo" name="codigo" readonly tabindex="-1">
-      </label>
-      <label class="vd-campo">
-        <span>Nombre <b class="vd-campo__obligatorio">*</b></span>
-        <input type="text" id="txt-nombre" name="nombre" maxlength="50" autocomplete="off" placeholder="Ej: Antibióticos">
-        <small id="lbl-error-nombre" class="vd-campo__error" role="alert"></small>
-      </label>
-      <div class="vd-modal__acciones">
-        <button type="button" class="vd-boton vd-boton--secundario" data-cerrar>Cancelar</button>
-        <button type="submit" class="vd-boton vd-boton--primario">Guardar</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Modal confirmación / aviso -->
-  <div id="mdl-confirmar" class="vd-modal js-modal" hidden>
-    <div class="vd-modal__fondo" data-cerrar></div>
-    <div class="vd-modal__hoja vd-confirmacion" role="alertdialog" aria-modal="true" aria-labelledby="lbl-titulo-confirmar" aria-describedby="lbl-texto-confirmar">
-      <div id="lbl-icono-confirmar" class="vd-confirmacion__icono" aria-hidden="true">🗑️</div>
-      <h3 id="lbl-titulo-confirmar"></h3>
-      <p id="lbl-texto-confirmar" class="vd-confirmacion__texto"></p>
-      <div class="vd-modal__acciones">
-        <button type="button" id="btn-cancelar-confirmar" class="vd-boton vd-boton--secundario" data-cerrar>Cancelar</button>
-        <button type="button" id="btn-aceptar-confirmar" class="vd-boton vd-boton--peligro">Eliminar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="sec-aviso" class="vd-aviso" role="status" aria-live="polite"></div>
 
   <script src="js/storage.js"></script>
-  <script src="js/clasificaciones.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/inicio.js"></script>
 </body>
 </html>

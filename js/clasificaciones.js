@@ -5,48 +5,27 @@
   let g_ent_paginaActual = 1;
   let g_ent_codigoEditando = null; // null = creando
 
-  const f_obj_obtenerElemento = (p_txt_id) => document.getElementById(p_txt_id);
+  const {
+    f_obj_obtenerElemento, f_txt_limpiarNombre, f_txt_normalizarNombre, f_txt_escaparHtml,
+    f_mostrarAviso, f_abrirModal, f_cerrarModal, f_mostrarConfirmacion
+  } = g_obj_vetInterfaz;
+
   const g_dom_btnNuevaClasificacion = f_obj_obtenerElemento('btn-nueva-clasificacion');
   const g_dom_tblClasificacionesCuerpo = f_obj_obtenerElemento('tbl-clasificaciones-cuerpo');
-  const g_dom_secEstadoVacio = f_obj_obtenerElemento('sec-estado-vacio');
-  const g_dom_lblInfoPagina = f_obj_obtenerElemento('lbl-info-pagina');
-  const g_dom_btnAnterior = f_obj_obtenerElemento('btn-anterior');
-  const g_dom_btnSiguiente = f_obj_obtenerElemento('btn-siguiente');
-  const g_dom_mdlFormulario = f_obj_obtenerElemento('mdl-formulario');
+  const g_dom_secEstadoVacioClasificaciones = f_obj_obtenerElemento('sec-estado-vacio-clasificaciones');
+  const g_dom_lblInfoPaginaClasificaciones = f_obj_obtenerElemento('lbl-info-pagina-clasificaciones');
+  const g_dom_btnAnteriorClasificaciones = f_obj_obtenerElemento('btn-anterior-clasificaciones');
+  const g_dom_btnSiguienteClasificaciones = f_obj_obtenerElemento('btn-siguiente-clasificaciones');
+  const g_dom_mdlFormularioClasificacion = f_obj_obtenerElemento('mdl-formulario-clasificacion');
   const g_dom_frmClasificacion = f_obj_obtenerElemento('frm-clasificacion');
-  const g_dom_lblTituloFormulario = f_obj_obtenerElemento('lbl-titulo-formulario');
-  const g_dom_txtCodigo = f_obj_obtenerElemento('txt-codigo');
-  const g_dom_txtNombre = f_obj_obtenerElemento('txt-nombre');
-  const g_dom_lblErrorNombre = f_obj_obtenerElemento('lbl-error-nombre');
-  const g_dom_mdlConfirmar = f_obj_obtenerElemento('mdl-confirmar');
-  const g_dom_lblIconoConfirmar = f_obj_obtenerElemento('lbl-icono-confirmar');
-  const g_dom_lblTituloConfirmar = f_obj_obtenerElemento('lbl-titulo-confirmar');
-  const g_dom_lblTextoConfirmar = f_obj_obtenerElemento('lbl-texto-confirmar');
-  const g_dom_btnCancelarConfirmar = f_obj_obtenerElemento('btn-cancelar-confirmar');
-  const g_dom_btnAceptarConfirmar = f_obj_obtenerElemento('btn-aceptar-confirmar');
-  const g_dom_secAviso = f_obj_obtenerElemento('sec-aviso');
-
-  function f_txt_limpiarNombre(p_txt_texto) {
-    return p_txt_texto.replace(/\s+/g, ' ').trim();
-  }
-
-  // Normaliza para comparar duplicados: sin tildes, minúsculas, espacios simples.
-  function f_txt_normalizarNombre(p_txt_texto) {
-    return f_txt_limpiarNombre(p_txt_texto)
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .toLowerCase();
-  }
+  const g_dom_lblTituloFormularioClasificacion = f_obj_obtenerElemento('lbl-titulo-formulario-clasificacion');
+  const g_dom_txtCodigoClasificacion = f_obj_obtenerElemento('txt-codigo-clasificacion');
+  const g_dom_txtNombreClasificacion = f_obj_obtenerElemento('txt-nombre-clasificacion');
+  const g_dom_lblErrorNombreClasificacion = f_obj_obtenerElemento('lbl-error-nombre-clasificacion');
 
   function f_arr_obtenerOrdenadas() {
     return g_obj_vetStorage.f_arr_obtenerClasificaciones()
       .sort((p_obj_clasificacionA, p_obj_clasificacionB) => p_obj_clasificacionA.codigo - p_obj_clasificacionB.codigo);
-  }
-
-  function f_txt_escaparHtml(p_txt_texto) {
-    const v_dom_contenedor = document.createElement('div');
-    v_dom_contenedor.textContent = p_txt_texto;
-    return v_dom_contenedor.innerHTML;
   }
 
   // ---------- Tabla ----------
@@ -70,20 +49,10 @@
         </td>
       </tr>`).join('');
 
-    g_dom_secEstadoVacio.hidden = v_arr_clasificaciones.length > 0;
-    g_dom_lblInfoPagina.textContent = `Página ${g_ent_paginaActual} de ${v_ent_totalPaginas}`;
-    g_dom_btnAnterior.disabled = g_ent_paginaActual <= 1;
-    g_dom_btnSiguiente.disabled = g_ent_paginaActual >= v_ent_totalPaginas;
-  }
-
-  // ---------- Aviso (toast) ----------
-  let g_ent_temporizadorAviso;
-  // p_txt_tipo: 'exito' o 'error'.
-  function f_mostrarAviso(p_txt_mensaje, p_txt_tipo = 'exito') {
-    g_dom_secAviso.textContent = p_txt_mensaje;
-    g_dom_secAviso.className = `vd-aviso vd-aviso--${p_txt_tipo} es-visible`;
-    clearTimeout(g_ent_temporizadorAviso);
-    g_ent_temporizadorAviso = setTimeout(() => g_dom_secAviso.classList.remove('es-visible'), 2600);
+    g_dom_secEstadoVacioClasificaciones.hidden = v_arr_clasificaciones.length > 0;
+    g_dom_lblInfoPaginaClasificaciones.textContent = `Página ${g_ent_paginaActual} de ${v_ent_totalPaginas}`;
+    g_dom_btnAnteriorClasificaciones.disabled = g_ent_paginaActual <= 1;
+    g_dom_btnSiguienteClasificaciones.disabled = g_ent_paginaActual >= v_ent_totalPaginas;
   }
 
   // Avisa que el registro ya no existe (p. ej. se borró en otra pestaña) y refresca la tabla.
@@ -92,89 +61,26 @@
     f_mostrarTabla();
   }
 
-  // ---------- Modales (foco atrapado y devuelto al cerrar) ----------
-  let g_dom_focoPrevio = null;
-  const c_txt_SELECTOR_ENFOCABLES = 'button:not([hidden]):not([disabled]), input:not([readonly]):not([disabled])';
-
-  function f_abrirModal(p_dom_modal, p_dom_elementoInicial) {
-    g_dom_focoPrevio = document.activeElement;
-    p_dom_modal.hidden = false;
-    (p_dom_elementoInicial || p_dom_modal.querySelector(c_txt_SELECTOR_ENFOCABLES)).focus();
-  }
-
-  function f_cerrarModal(p_dom_modal) {
-    if (p_dom_modal.hidden) return;
-    if (p_dom_modal.contains(document.activeElement)) document.activeElement.blur();
-    p_dom_modal.hidden = true;
-    if (g_dom_focoPrevio && document.contains(g_dom_focoPrevio)) g_dom_focoPrevio.focus();
-    g_dom_focoPrevio = null;
-  }
-
-  function f_configurarModal(p_dom_modal) {
-    function h_clickModal(p_obj_evento) {
-      if (p_obj_evento.target.closest('[data-cerrar]')) f_cerrarModal(p_dom_modal);
-    }
-
-    function h_teclaModal(p_obj_evento) {
-      if (p_obj_evento.key !== 'Tab') return;
-      const v_arr_enfocables = [...p_dom_modal.querySelectorAll(c_txt_SELECTOR_ENFOCABLES)];
-      const v_dom_primero = v_arr_enfocables[0];
-      const v_dom_ultimo = v_arr_enfocables[v_arr_enfocables.length - 1];
-      if (p_obj_evento.shiftKey && document.activeElement === v_dom_primero) {
-        p_obj_evento.preventDefault();
-        v_dom_ultimo.focus();
-      } else if (!p_obj_evento.shiftKey && document.activeElement === v_dom_ultimo) {
-        p_obj_evento.preventDefault();
-        v_dom_primero.focus();
-      }
-    }
-
-    p_dom_modal.addEventListener('click', h_clickModal);
-    p_dom_modal.addEventListener('keydown', h_teclaModal);
-  }
-
-  function h_teclaEscape(p_obj_evento) {
-    if (p_obj_evento.key === 'Escape') document.querySelectorAll('.js-modal').forEach(f_cerrarModal);
-  }
-
-  document.querySelectorAll('.js-modal').forEach(f_configurarModal);
-  document.addEventListener('keydown', h_teclaEscape);
-
   function f_abrirFormulario(p_obj_clasificacion) {
     g_ent_codigoEditando = p_obj_clasificacion ? p_obj_clasificacion.codigo : null;
-    g_dom_lblTituloFormulario.textContent = p_obj_clasificacion ? 'Editar clasificación' : 'Nueva clasificación';
-    g_dom_txtCodigo.value = p_obj_clasificacion
+    g_dom_lblTituloFormularioClasificacion.textContent = p_obj_clasificacion ? 'Editar clasificación' : 'Nueva clasificación';
+    g_dom_txtCodigoClasificacion.value = p_obj_clasificacion
       ? p_obj_clasificacion.codigo
       : g_obj_vetStorage.f_ent_consultarSiguienteCodigo();
-    g_dom_txtNombre.value = p_obj_clasificacion ? p_obj_clasificacion.nombre : '';
+    g_dom_txtNombreClasificacion.value = p_obj_clasificacion ? p_obj_clasificacion.nombre : '';
     f_mostrarError('');
-    f_abrirModal(g_dom_mdlFormulario, g_dom_txtNombre);
+    f_abrirModal(g_dom_mdlFormularioClasificacion, g_dom_txtNombreClasificacion);
   }
 
   function f_mostrarError(p_txt_mensaje) {
-    g_dom_lblErrorNombre.textContent = p_txt_mensaje;
-    g_dom_txtNombre.classList.toggle('es-invalido', Boolean(p_txt_mensaje));
-  }
-
-  // Confirmación genérica: si p_fun_alAceptar es null, actúa como aviso de solo lectura.
-  function f_mostrarConfirmacion({ p_txt_icono, p_txt_titulo, p_txt_texto, p_txt_textoAceptar, p_fun_alAceptar }) {
-    g_dom_lblIconoConfirmar.textContent = p_txt_icono;
-    g_dom_lblTituloConfirmar.textContent = p_txt_titulo;
-    g_dom_lblTextoConfirmar.textContent = p_txt_texto;
-    g_dom_btnAceptarConfirmar.hidden = !p_fun_alAceptar;
-    g_dom_btnAceptarConfirmar.textContent = p_txt_textoAceptar || 'Aceptar';
-    g_dom_btnCancelarConfirmar.textContent = p_fun_alAceptar ? 'Cancelar' : 'Entendido';
-    g_dom_btnAceptarConfirmar.onclick = () => {
-      f_cerrarModal(g_dom_mdlConfirmar);
-      p_fun_alAceptar();
-    };
-    f_abrirModal(g_dom_mdlConfirmar, g_dom_btnCancelarConfirmar);
+    g_dom_lblErrorNombreClasificacion.textContent = p_txt_mensaje;
+    g_dom_txtNombreClasificacion.classList.toggle('es-invalido', Boolean(p_txt_mensaje));
   }
 
   // ---------- Acciones ----------
   function h_enviarFormulario(p_obj_evento) {
     p_obj_evento.preventDefault();
-    const v_txt_nombre = f_txt_limpiarNombre(g_dom_txtNombre.value);
+    const v_txt_nombre = f_txt_limpiarNombre(g_dom_txtNombreClasificacion.value);
 
     if (!v_txt_nombre) {
       f_mostrarError('El nombre es obligatorio.');
@@ -210,7 +116,7 @@
       const v_obj_clasificacion = v_arr_clasificaciones
         .find((it_clasificacion) => it_clasificacion.codigo === g_ent_codigoEditando);
       if (!v_obj_clasificacion) {
-        f_cerrarModal(g_dom_mdlFormulario);
+        f_cerrarModal(g_dom_mdlFormularioClasificacion);
         f_avisarRegistroInexistente();
         return;
       }
@@ -222,7 +128,7 @@
       f_mostrarAviso('Clasificación actualizada.');
     }
 
-    f_cerrarModal(g_dom_mdlFormulario);
+    f_cerrarModal(g_dom_mdlFormularioClasificacion);
     f_mostrarTabla();
   }
 
@@ -298,11 +204,11 @@
   }
 
   g_dom_frmClasificacion.addEventListener('submit', h_enviarFormulario);
-  g_dom_txtNombre.addEventListener('input', h_escribirNombre);
+  g_dom_txtNombreClasificacion.addEventListener('input', h_escribirNombre);
   g_dom_tblClasificacionesCuerpo.addEventListener('click', h_clickTabla);
   g_dom_btnNuevaClasificacion.addEventListener('click', h_clickNuevaClasificacion);
-  g_dom_btnAnterior.addEventListener('click', h_clickAnterior);
-  g_dom_btnSiguiente.addEventListener('click', h_clickSiguiente);
+  g_dom_btnAnteriorClasificaciones.addEventListener('click', h_clickAnterior);
+  g_dom_btnSiguienteClasificaciones.addEventListener('click', h_clickSiguiente);
 
   f_mostrarTabla();
 })();

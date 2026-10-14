@@ -15,6 +15,7 @@
   --vd-color-blanco: #ffffff;
   --vd-color-fila-par: #f6fbfa;
   --vd-color-campo-lectura: #eef3f2;
+  --vd-color-blanco-translucido: rgba(255, 255, 255, 0.18);
   --vd-radio-tarjeta: 14px;
   --vd-sombra-tarjeta: 0 4px 14px rgba(15, 138, 126, 0.12);
   --vd-sombra-app: 0 0 30px rgba(0, 0, 0, 0.08);
@@ -53,9 +54,28 @@ body {
 .vd-app__titulo { margin: 0; font-size: 1.3rem; letter-spacing: 0.5px; }
 .vd-app__subtitulo { margin: 2px 0 0; font-size: 0.8rem; opacity: 0.85; }
 
+/* Botón hamburguesa */
+.vd-boton-menu {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+.vd-boton-menu:hover { background: var(--vd-color-blanco-translucido); }
+.vd-boton-menu__barra { width: 22px; height: 2.5px; border-radius: 2px; background: var(--vd-color-blanco); }
+
 .vd-app__contenido {
   flex: 1;
-  padding: 16px 16px 90px;
+  padding: 16px 16px 32px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -127,6 +147,7 @@ body {
 .vd-tabla td.vd-tabla__celda--codigo { text-align: center; font-variant-numeric: tabular-nums; color: var(--vd-color-texto-suave); font-weight: 600; }
 .vd-tabla__encabezado--acciones { width: 100px; text-align: center !important; }
 .vd-tabla td.vd-tabla__celda--acciones { text-align: center; white-space: nowrap; }
+.vd-tabla__detalle { display: block; margin-top: 3px; font-size: 0.76rem; line-height: 1.35; color: var(--vd-color-texto-suave); }
 
 .vd-boton-icono {
   width: 38px;
@@ -153,33 +174,90 @@ body {
 }
 .vd-paginador__info { font-size: 0.85rem; color: var(--vd-color-texto-suave); }
 
-/* Navegación inferior */
-.vd-menu-inferior {
-  position: fixed;
+/* Menú lateral (hamburguesa) */
+.vd-menu-lateral { position: fixed; inset: 0; z-index: 15; }
+.vd-menu-lateral[hidden] { display: none; }
+.vd-menu-lateral__fondo { position: absolute; inset: 0; background: var(--vd-color-fondo-modal); }
+.vd-menu-lateral__panel {
+  position: absolute;
+  top: 0;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  background: var(--vd-color-tarjeta);
-  border-top: 1px solid var(--vd-color-borde);
-  z-index: 10;
-}
-.vd-menu-inferior__opcion {
-  flex: 1;
+  left: max(0px, calc(50% - 240px));
+  width: min(290px, 82%);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  background: var(--vd-color-tarjeta);
+  box-shadow: var(--vd-sombra-app);
+  animation: deslizar 0.2s ease-out;
+}
+@keyframes deslizar { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.vd-menu-lateral__encabezado {
+  display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 8px 0 10px;
-  font-size: 0.72rem;
-  color: var(--vd-color-texto-suave);
+  gap: 10px;
+  padding: 16px;
+  color: var(--vd-color-blanco);
+  background: linear-gradient(135deg, var(--vd-color-primario), var(--vd-color-primario-oscuro));
+}
+.vd-menu-lateral__titulo { flex: 1; font-size: 1.15rem; letter-spacing: 0.5px; }
+.vd-menu-lateral__cerrar {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--vd-color-blanco);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.vd-menu-lateral__cerrar:hover { background: var(--vd-color-blanco-translucido); }
+.vd-menu-lateral__lista { list-style: none; margin: 0; padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+.vd-menu-lateral__opcion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border-left: 4px solid transparent;
+  border-radius: 10px;
+  color: var(--vd-color-texto);
+  font-weight: 600;
   text-decoration: none;
 }
-.vd-menu-inferior__opcion span { font-size: 1.25rem; }
-.vd-menu-inferior__opcion.es-activo { color: var(--vd-color-primario); font-weight: 700; }
-.vd-menu-inferior__opcion.es-desactivado { opacity: 0.45; pointer-events: none; }
+.vd-menu-lateral__opcion:hover { background: var(--vd-color-primario-suave); }
+.vd-menu-lateral__opcion.es-activo {
+  background: var(--vd-color-primario-suave);
+  border-left-color: var(--vd-color-primario);
+  color: var(--vd-color-primario-oscuro);
+}
+.vd-menu-lateral__opcion.es-desactivado { opacity: 0.45; cursor: not-allowed; }
+.vd-menu-lateral__opcion.es-desactivado:hover { background: transparent; }
+.vd-menu-lateral__icono { width: 28px; font-size: 1.3rem; text-align: center; }
+.vd-menu-lateral__detalle { margin-left: auto; font-size: 0.72rem; font-weight: 400; color: var(--vd-color-texto-suave); }
+
+/* Tarjetas de la página de inicio */
+.vd-tarjeta-opcion {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-left: 5px solid var(--vd-color-primario);
+  border-radius: var(--vd-radio-tarjeta);
+  background: var(--vd-color-tarjeta);
+  box-shadow: var(--vd-sombra-tarjeta);
+  color: var(--vd-color-texto);
+  text-decoration: none;
+  transition: background 0.15s, transform 0.05s;
+}
+a.vd-tarjeta-opcion:hover { background: var(--vd-color-primario-suave); }
+a.vd-tarjeta-opcion:active { transform: scale(0.98); }
+.vd-tarjeta-opcion__icono { font-size: 2rem; }
+.vd-tarjeta-opcion__texto { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 0.85rem; color: var(--vd-color-texto-suave); }
+.vd-tarjeta-opcion__titulo { font-size: 1.05rem; color: var(--vd-color-primario-oscuro); }
+.vd-tarjeta-opcion__total { margin-top: 4px; font-weight: 600; color: var(--vd-color-primario); }
+.vd-tarjeta-opcion__flecha { font-size: 1.8rem; color: var(--vd-color-primario); }
+.vd-tarjeta-opcion--desactivada { opacity: 0.5; border-left-color: var(--vd-color-borde); }
 
 /* Modal tipo hoja inferior */
 .vd-modal { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
@@ -189,6 +267,8 @@ body {
   position: relative;
   width: 100%;
   max-width: 480px;
+  max-height: 92vh;
+  overflow-y: auto;
   background: var(--vd-color-tarjeta);
   border-radius: 20px 20px 0 0;
   padding: 20px 16px 24px;
@@ -199,18 +279,39 @@ body {
 
 .vd-campo { display: block; margin-bottom: 14px; }
 .vd-campo span { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
-.vd-campo input {
+.vd-campo input,
+.vd-campo select {
   width: 100%;
   font: inherit;
   padding: 12px;
   border: 1.5px solid var(--vd-color-borde);
   border-radius: 10px;
 }
-.vd-campo input:focus { outline: none; border-color: var(--vd-color-primario); box-shadow: 0 0 0 3px var(--vd-color-primario-suave); }
+.vd-campo select { background: var(--vd-color-blanco); color: var(--vd-color-texto); }
+.vd-campo input:focus,
+.vd-campo select:focus { outline: none; border-color: var(--vd-color-primario); box-shadow: 0 0 0 3px var(--vd-color-primario-suave); }
 .vd-campo input[readonly] { background: var(--vd-color-campo-lectura); color: var(--vd-color-texto-suave); }
-.vd-campo input.es-invalido { border-color: var(--vd-color-peligro); }
+.vd-campo input.es-invalido,
+.vd-campo select.es-invalido { border-color: var(--vd-color-peligro); }
 .vd-campo__error { display: block; min-height: 1.1em; margin-top: 4px; color: var(--vd-color-peligro); font-size: 0.8rem; }
 .vd-campo__obligatorio { color: var(--vd-color-peligro); }
+
+.vd-formulario__fila { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Casillas de verificación (almacenamiento) */
+.vd-casillas { margin: 0 0 14px; padding: 0; border: none; min-width: 0; }
+.vd-casillas legend { padding: 0; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; }
+.vd-casillas__lista {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 8px;
+  border: 1.5px solid var(--vd-color-borde);
+  border-radius: 10px;
+}
+.vd-casillas.es-invalido .vd-casillas__lista { border-color: var(--vd-color-peligro); }
+.vd-casillas__opcion { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 0.85rem; cursor: pointer; }
+.vd-casillas__opcion input { width: 20px; height: 20px; margin: 0; flex-shrink: 0; accent-color: var(--vd-color-primario); }
 
 .vd-modal__acciones { display: flex; justify-content: flex-end; gap: 8px; }
 
@@ -222,7 +323,7 @@ body {
 .vd-aviso {
   position: fixed;
   left: 50%;
-  bottom: 84px;
+  bottom: 24px;
   transform: translateX(-50%) translateY(20px);
   max-width: calc(100% - 32px);
   padding: 10px 16px;

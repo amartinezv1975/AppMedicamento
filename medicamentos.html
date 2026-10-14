@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f8a7e">
+  <title>VetDosis - Medicamentos</title>
+  <link rel="icon" href="img/logo-vetdosis.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-pagina="medicamentos">
+  <div class="vd-app">
+    <header class="vd-app__encabezado">
+      <button type="button" id="btn-abrir-menu" class="vd-boton-menu" aria-label="Abrir menú"
+              aria-expanded="false" aria-controls="sec-menu-lateral">
+        <span class="vd-boton-menu__barra"></span>
+        <span class="vd-boton-menu__barra"></span>
+        <span class="vd-boton-menu__barra"></span>
+      </button>
+      <img src="img/logo-vetdosis.svg" alt="" class="vd-app__logo">
+      <div>
+        <h1 class="vd-app__titulo">VetDosis</h1>
+        <p class="vd-app__subtitulo">Cálculo de medicamentos por peso</p>
+      </div>
+    </header>
+
+    <main class="vd-app__contenido">
+      <div class="vd-presentacion">
+        <div class="vd-presentacion__texto">
+          <h2>Medicamentos</h2>
+          <p>Registra los medicamentos de uso veterinario.</p>
+        </div>
+        <span class="vd-presentacion__icono" aria-hidden="true">💊</span>
+      </div>
+
+      <button type="button" id="btn-nuevo-medicamento" class="vd-boton vd-boton--primario vd-boton--bloque">
+        <span aria-hidden="true">＋</span> Nuevo medicamento
+      </button>
+
+      <div class="vd-tarjeta-tabla">
+        <table class="vd-tabla" aria-label="Medicamentos veterinarios">
+          <thead>
+            <tr>
+              <th class="vd-tabla__encabezado--codigo">Código</th>
+              <th>Medicamento</th>
+              <th class="vd-tabla__encabezado--acciones">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-medicamentos-cuerpo"></tbody>
+        </table>
+
+        <div id="sec-estado-vacio-medicamentos" class="vd-estado-vacio" hidden>
+          <img src="img/ilustracion-vacio.svg" alt="">
+          <p>Aún no hay medicamentos registrados.</p>
+        </div>
+
+        <nav class="vd-paginador" aria-label="Paginación de medicamentos">
+          <button type="button" id="btn-anterior-medicamentos" class="vd-boton vd-boton--secundario">« Anterior</button>
+          <span id="lbl-info-pagina-medicamentos" class="vd-paginador__info"></span>
+          <button type="button" id="btn-siguiente-medicamentos" class="vd-boton vd-boton--secundario">Siguiente »</button>
+        </nav>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal crear / editar medicamento -->
+  <div id="mdl-formulario-medicamento" class="vd-modal js-modal" hidden>
+    <div class="vd-modal__fondo" data-cerrar></div>
+    <form id="frm-medicamento" class="vd-modal__hoja" role="dialog" aria-modal="true" aria-labelledby="lbl-titulo-formulario-medicamento" novalidate>
+      <h3 id="lbl-titulo-formulario-medicamento">Nuevo medicamento</h3>
+      <label class="vd-campo">
+        <span>Código</span>
+        <input type="text" id="txt-codigo-medicamento" name="codigo-medicamento" readonly tabindex="-1">
+      </label>
+      <label class="vd-campo">
+        <span>Nombre <b class="vd-campo__obligatorio">*</b></span>
+        <input type="text" id="txt-nombre-medicamento" name="nombre-medicamento" maxlength="60" autocomplete="off"
+               placeholder="Ej: Amoxicilina" aria-describedby="lbl-error-nombre-medicamento">
+        <small id="lbl-error-nombre-medicamento" class="vd-campo__error" role="alert"></small>
+      </label>
+      <label class="vd-campo">
+        <span>Clasificación <b class="vd-campo__obligatorio">*</b></span>
+        <select id="sel-clasificacion-medicamento" name="clasificacion-medicamento" aria-describedby="lbl-error-clasificacion-medicamento"></select>
+        <small id="lbl-error-clasificacion-medicamento" class="vd-campo__error" role="alert"></small>
+      </label>
+      <div class="vd-formulario__fila">
+        <label class="vd-campo">
+          <span>Vía de administración <b class="vd-campo__obligatorio">*</b></span>
+          <select id="sel-via-administracion" name="via-administracion" aria-describedby="lbl-error-via-administracion"></select>
+          <small id="lbl-error-via-administracion" class="vd-campo__error" role="alert"></small>
+        </label>
+        <label class="vd-campo">
+          <span>Presentación <b class="vd-campo__obligatorio">*</b></span>
+          <select id="sel-presentacion" name="presentacion" aria-describedby="lbl-error-presentacion"></select>
+          <small id="lbl-error-presentacion" class="vd-campo__error" role="alert"></small>
+        </label>
+      </div>
+      <fieldset id="sec-almacenamiento-medicamento" class="vd-casillas" aria-describedby="lbl-error-almacenamiento">
+        <legend>Condiciones de almacenamiento <b class="vd-campo__obligatorio">*</b></legend>
+        <div id="sec-opciones-almacenamiento" class="vd-casillas__lista"></div>
+        <small id="lbl-error-almacenamiento" class="vd-campo__error" role="alert"></small>
+      </fieldset>
+      <div class="vd-modal__acciones">
+        <button type="button" class="vd-boton vd-boton--secundario" data-cerrar>Cancelar</button>
+        <button type="submit" class="vd-boton vd-boton--primario">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal confirmación / aviso -->
+  <div id="mdl-confirmar" class="vd-modal js-modal" hidden>
+    <div class="vd-modal__fondo" data-cerrar></div>
+    <div class="vd-modal__hoja vd-confirmacion" role="alertdialog" aria-modal="true" aria-labelledby="lbl-titulo-confirmar" aria-describedby="lbl-texto-confirmar">
+      <div id="lbl-icono-confirmar" class="vd-confirmacion__icono" aria-hidden="true">🗑️</div>
+      <h3 id="lbl-titulo-confirmar"></h3>
+      <p id="lbl-texto-confirmar" class="vd-confirmacion__texto"></p>
+      <div class="vd-modal__acciones">
+        <button type="button" id="btn-cancelar-confirmar" class="vd-boton vd-boton--secundario" data-cerrar>Cancelar</button>
+        <button type="button" id="btn-aceptar-confirmar" class="vd-boton vd-boton--peligro">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-aviso" class="vd-aviso" role="status" aria-live="polite"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/interfaz.js"></script>
+  <script src="js/medicamentos.js"></script>
+</body>
+</html>

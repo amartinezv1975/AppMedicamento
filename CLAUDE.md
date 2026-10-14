@@ -9,28 +9,42 @@ Este archivo orienta a Claude Code (claude.ai/code) cuando trabaja con el códig
 ## Ejecución
 
 - Abre `index.html` directamente en el navegador, o usa un servidor local:
-  `python -m http.server 5500` → `http://localhost:5500/index.html`
+  `python -m http.server 5500` → `http://localhost:5500/index.html` (cada opción tiene su página: `clasificaciones.html`, `medicamentos.html`)
 - La automatización del navegador (claude-in-chrome) no puede abrir URLs `file://`. Para verificar en Chrome, usa el servidor local.
 - No hay pruebas automáticas. Las funcionalidades se verifican usando los botones reales en el navegador, con clics o con un script, en una ventana del tamaño de un celular.
 - Los datos se guardan en `localStorage`. Para volver a los datos de ejemplo, borra las llaves `vet_*` y recarga:
-  `['vet_clasificaciones','vet_medicamentos','vet_seq_clasificacion'].forEach(k => localStorage.removeItem(k))`
+  `['vet_clasificaciones','vet_medicamentos','vet_seq_clasificacion','vet_seq_medicamento'].forEach(k => localStorage.removeItem(k))`
 
 ## Arquitectura
 
-- `index.html` es la estructura de una sola página: encabezado, área de contenido `main`, menú inferior fijo, dos ventanas emergentes compartidas y un aviso tipo toast. Las ventanas son `#mdl-formulario`, para crear y editar, y `#mdl-confirmar`, que sirve como confirmación y también como aviso de solo lectura. Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: `js/storage.js` debe cargarse antes que los scripts de cada funcionalidad.
+- Una página HTML por opción, todas con el mismo encabezado (botón ☰ `#btn-abrir-menu`, logo y título):
+  - `index.html`: inicio, con tarjetas de acceso a cada opción y el total de registros (`js/inicio.js`).
+  - `clasificaciones.html` y `medicamentos.html`: tabla, ventana para crear y editar (`#mdl-formulario-clasificacion`, `#mdl-formulario-medicamento`), `#mdl-confirmar` (confirmación y también aviso de solo lectura) y el aviso tipo toast `#sec-aviso`.
+  - El `<body data-pagina="...">` indica qué opción del menú se marca como activa. Los ids llevan el sufijo de su opción (`btn-anterior-medicamentos`).
+- Los scripts se cargan con etiquetas `<script>` normales, no como módulos, y el orden importa: `js/storage.js`, `js/menu.js`, `js/interfaz.js` y luego el script de la página.
+- `js/menu.js` arma el menú lateral (hamburguesa) en todas las páginas desde una sola lista, `c_arr_OPCIONES_MENU`. Para agregar una opción: súmala a esa lista, crea su `.html` copiando el encabezado de otra página y ponle su `data-pagina`. Se cierra con ✕, Escape o tocando el fondo.
 - `js/storage.js` expone un objeto global `g_obj_vetStorage` (una IIFE; no se llama `Storage` para no ocultar la interfaz del navegador) y es el único archivo que usa `localStorage`. Carga los datos iniciales la primera vez, solo cuando una llave no existe:
   - `vet_clasificaciones`: `[{ codigo, nombre }]`
-  - `vet_medicamentos`: ejemplos `[{ id, nombre, codigoClasificacion }]`. Son temporales y sirven para probar la regla de "no borrar una clasificación con datos asociados" antes de que exista el módulo de Medicamentos. Reemplázalos cuando se construya ese módulo.
-  - `vet_seq_clasificacion`: el último código asignado. Los códigos son consecutivos, automáticos y no editables, y no se reutilizan después de borrar. El siguiente código es el mayor entre esta secuencia y el código más alto existente, más 1, para que nunca choque.
+  - `vet_medicamentos`: `[{ id, nombre, codigoClasificacion, viaAdministracion, presentacion, almacenamiento: [] }]`, con 20 medicamentos de ejemplo. La semilla referencia la clasificación por nombre y la resuelve a su código al cargar; si falta (p. ej. Antiparasitarios), la crea. Si encuentra los 4 medicamentos temporales de antes de HU-02 (sin `viaAdministracion`), los reemplaza por la semilla.
+  - `vet_seq_clasificacion` y `vet_seq_medicamento`: el último código asignado. Los códigos son consecutivos, automáticos y no editables, y no se reutilizan después de borrar. El siguiente código es el mayor entre la secuencia y el código más alto existente, más 1, para que nunca choque.
+  - Los catálogos fijos (vías, presentaciones, condiciones de almacenamiento) viven en `storage.js` como `{ valor, etiqueta }`: se guarda el valor y se muestra la etiqueta.
   - Las funciones `f_bol_guardar*` devuelven `false` si el navegador no permite guardar; las pantallas deben mostrar un error en ese caso, no un mensaje de éxito.
-- Los scripts de cada funcionalidad, como `js/clasificaciones.js`, son IIFE independientes que vuelven a dibujar la pantalla desde `g_obj_vetStorage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
-- Las pestañas **Medicamentos** y **Calcular** del menú inferior están desactivadas y reservadas para historias futuras.
+- `js/interfaz.js` expone `g_obj_vetInterfaz` con lo compartido entre las páginas de mantenimiento: aviso toast, abrir/cerrar ventanas con foco atrapado, `f_mostrarConfirmacion`, limpieza/normalización de nombres y escape de HTML.
+- Los scripts de cada funcionalidad (`js/clasificaciones.js`, `js/medicamentos.js`) son IIFE independientes que vuelven a dibujar la pantalla desde `g_obj_vetStorage` en cada cambio. No guardan datos en memoria, solo el estado de la interfaz, como la página actual.
+- La opción **Calcular dosis** aparece desactivada ("Próximamente") en el menú y en el inicio; está reservada para una historia futura.
 
 ## Reglas de negocio ya implementadas (HU-01 Clasificaciones)
 
 - Tabla tipo Excel con **3 registros por página**, botones de editar y borrar en cada fila, y un botón "Nueva clasificación".
 - Se rechazan los nombres repetidos después de normalizarlos: quitar espacios sobrantes, pasar a minúsculas y quitar tildes. Al editar, el propio registro no cuenta como repetido.
 - No se permite borrar una clasificación si algún `medicamento.codigoClasificacion` usa su código; el aviso muestra los medicamentos asociados.
+
+## Reglas de negocio ya implementadas (HU-02 Medicamentos)
+
+- Misma tabla de **3 registros por página**; columnas Código · Medicamento · Acciones, con clasificación, vía, presentación y almacenamiento en letra pequeña bajo el nombre.
+- Campos: nombre, clasificación (lista con las clasificaciones vigentes), vía de administración (una: oral, intramuscular, intravenosa, subcutánea), presentación (ml, gramos, pastillas) y condiciones de almacenamiento (varias: temperatura ambiente, refrigeración, cadena de frío, proteger de la humedad).
+- Todos los campos son obligatorios, con al menos una condición de almacenamiento. Nombres repetidos se rechazan con la misma normalización de HU-01. "Temperatura ambiente" no se combina con "Refrigeración" ni "Cadena de frío".
+- Borrar un medicamento pide confirmación y no tiene restricciones.
 
 ## Convenciones
 
